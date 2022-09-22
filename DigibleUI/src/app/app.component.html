@@ -1,0 +1,26 @@
+<div
+  class="error-alert my-0 py-3 mb-4"
+  role="alert"
+  id="error-alert"
+  *ngIf="showAlertMessage"
+>
+  <div class="d-flex font-weight-bold text-white mb-0">
+    <p *ngIf="error_message !== ' '" class="mr-2 mb-0">
+      {{ error_message }}
+    </p>
+    <p *ngIf="!noProvider && error_message === ' ' && connectMatic" class="mr-2 mb-0">
+      Please connect your wallet to the Polygon network
+      <span class="cursor-pointer" (click)="connectMatic()">Click here </span>
+    </p>
+    <p *ngIf="noProvider" class="mr-2 mb-0">
+      Please connect your wallet
+    </p>
+    <div (click)="closeErrorBanner()">
+      <i class="fa fa-times-circle cursor-pointer"></i>
+    </div>
+  </div>
+</div>
+<router-outlet 
+  style="overflow: hidden"
+  (activate)='onActivate($event)'
+></router-outlet>

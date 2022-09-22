@@ -1,0 +1,31 @@
+
+::ng-deep .ngxImageZoomContainer > img {
+  max-height: 100%;
+}
+
+::ng-deep .ngxImageZoomContainer {
+  height: 100% !important;
+  text-align: center;
+}
+
+.c-card__body {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+
+  .scrollbar {
+    height: 150px;
+  }
+
+  .c-card__description {
+    height: 80px;
+  }
+}
+
+.c-card__footer-inner {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}

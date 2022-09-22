@@ -1,0 +1,23 @@
+.c-faq {
+}
+
+.c-faq__block {
+  margin-bottom: 1rem;
+}
+
+.c-faq__title {
+  display: flex;
+  background-color: #5588e6;
+  color: #fff;
+  padding: 1rem;
+  cursor: pointer;
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border-radius: 1rem;
+  transition: background-color 350ms ease-in-out;
+
+  &:hover {
+    background-color: darken(#5588e6, 10%);
+  }
+}

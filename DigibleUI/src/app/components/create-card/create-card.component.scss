@@ -1,0 +1,105 @@
+.card-preview {
+  max-width: 220px;
+}
+
+.video-preview {
+  max-width: 420px;
+}
+
+.video-background {
+  width: 100%;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.button {
+  font-family: "Avenir LT Std";
+  font-size: 17px;
+  background-color: #5588e6;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  color: white;
+
+  & .full-width {
+    width: 100%;
+  }
+}
+
+.card-sides {
+  position: relative;
+}
+
+.card-image-remove {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.drop-zone {
+  border: 2px dashed #0782d0;
+  border-radius: 30px;
+  margin: auto;
+  padding: 2rem !important;
+  display: flex;
+  justify-content: center;
+  height: 100% !important;
+}
+
+/* ==================
+Properties form 
+=====================*/
+
+.c-properties-form__body {
+  display: table-row-group;
+  vertical-align: middle;
+  border-color: inherit;
+}
+
+.c-properties-form__close {
+  padding: 0px 12px;
+  cursor: pointer;
+}
+
+.c-properties-form__input {
+  background-color: rgb(255, 255, 255);
+  border-radius: 10px;
+  border: 1px solid rgb(229, 232, 235);
+  display: flex;
+  position: relative;
+
+  .form-control {
+    border-radius: 0;
+    border: 1px solid rgb(229, 232, 235);
+  }
+}
+
+.c-properties-form__label {
+  border-bottom-left-radius: 10px;
+  border-right: 1px solid rgb(229, 232, 235);
+  border-top-left-radius: 10px;
+  -webkit-box-align: center;
+  align-items: center;
+  color: rgb(112, 122, 131);
+  display: flex;
+  -webkit-box-pack: center;
+  justify-content: center;
+  user-select: none;
+  background-color: rgb(251, 253, 255);
+}
+
+.ngx-file-drop__content {
+  height: auto !important;
+}
+
+.image-preview {
+  margin-bottom: 1rem;
+
+  img, video {
+    width: 100%;
+    max-height: 100%;
+    border-radius: 16px;
+  }
+}

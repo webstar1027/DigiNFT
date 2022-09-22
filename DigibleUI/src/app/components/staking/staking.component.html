@@ -1,0 +1,27 @@
+<div class="container page-top">
+  <div class="row c-page-title">
+    <div class="col-12 p-t-10 p-b-6">
+      <span class="section-title"><span class="icon staking"></span>Stake</span>
+    </div>
+    <div class="solid mt-4 mb-4"></div>
+  </div>
+  <div class="row justify-center" *ngIf="showSwitchToMatic">
+    <div class="col-lg-12 text-center mt-4">
+      <p>
+        This section of the dApp only works if you connect your wallet to the
+        MATIC Network.
+      </p>
+    </div>
+    <div class="mx-auto text-center mt-2">
+      <button class="btn btn-primary btn-menu" (click)="switchToMatic()">
+        <span class="btn-title">Connect to MATIC</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="row justify-center pb-4 pt-lg-5 pb-lg-5" *ngIf="!showSwitchToMatic">
+    <div class="col-xl-4 col-lg-5 col-md-6 col-sm-8" *ngFor="let stake of stakings">
+      <app-stake [stake]="stake"></app-stake>
+    </div>
+  </div>
+</div>

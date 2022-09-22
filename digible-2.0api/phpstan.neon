@@ -1,0 +1,19 @@
+includes:
+    - ./vendor/nunomaduro/larastan/extension.neon
+
+parameters:
+
+    paths:
+        - app
+
+    # The level 9 is the highest level
+    level: 8
+
+    ignoreErrors:
+    #        - '#Attribute class JetBrains\\PhpStorm\\([a-zA-Z]+) does not exist#'
+
+    excludePaths:
+        - ./*/*/FileToBeExcluded.php
+
+    checkMissingIterableValueType: false
+    checkGenericClassInNonGenericObjectType: false

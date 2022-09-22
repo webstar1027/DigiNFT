@@ -1,0 +1,203 @@
+<a
+  *ngIf="data"
+  [routerLink]="'/details/' + data.network + '/' + data.token_id + '/' + data.token_address"
+  class="c-card cursor-pointer"
+>
+  <figure class="c-card__figure">
+    <img
+      *ngIf="!data?.tokenData?.isVideo"
+      class="c-card__figure__video"
+      [src]="data?.tokenData?.image"
+      (click)="showZoomImage=true"
+      alt="image"
+    />
+    <video class="c-card__figure__video" controls *ngIf="data?.tokenData?.isVideo">
+      <source type="video/webm" [src]="data?.tokenData?.image">
+      <source type="video/mp4" [src]="data?.tokenData?.image">
+    </video>
+  </figure>
+
+  <div class="c-card__body">
+    <div class="c-card__top"> 
+      <h1 class="c-card__title" *ngIf="data && data.tokenData">
+        <span>{{ data.tokenData.name }}</span>
+      </h1>
+    </div>
+    <div
+      *ngIf="data.tokenData && data.tokenData.description"
+      class="c-card__description"
+    >
+      <perfect-scrollbar class="scrollbar">
+        <div>
+          <p>
+            {{ data.tokenData.description }}
+          </p>
+        </div>
+      </perfect-scrollbar>
+    </div>
+    <div
+      *ngIf="data.tokenData && !data.tokenData.description"
+      class="c-card__description"
+    >
+      <p>No description has been created for this NFT.</p>
+    </div>
+    <!-- <button
+      class="btn btn-primary my-2 w-100"
+      *ngIf="isMakeOffer"
+      data-toggle="modal"
+      data-target="#offerModal"
+    >
+      Make Offer
+    </button> -->
+  </div>
+  <div class="c-card__footer mt-2">
+   <!--  <ng-container class="mb-4" *ngIf="view !== 'details'">
+      <ul class="c-card__list">
+        <li *ngFor="let desc_item of description | keyvalue: keepOriginalOrder">
+          <div
+            *ngIf="
+              desc_item.key !== 'backCardImage' &&
+              desc_item.key !== 'description'
+            "
+            class="row"
+          >
+            <div class="bold text-capitalize col-6">
+              <span>{{ desc_item.key }}:</span>
+            </div>
+            <div class="col-6">
+              <span>{{ desc_item.value || "..." }}</span>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </ng-container> -->
+    <div class="c-card__footer-inner">
+      <div *ngIf="physical === 'Yes'" class="d-flex flex-row">
+        <span class="c-card__safe icon safe mr-2"></span>
+        <span class="c-card__info">Physically backed</span>
+      </div>
+      <div
+        *ngIf="data.network === 'ETH'"
+        class="d-flex flex-row"
+      >
+        <span class="c-card__safe icon ethereum mr-2"></span>
+        <span class="c-card__info">ERC-20</span>
+      </div>
+      <div
+        *ngIf="data.network === 'MATIC'"
+        class="d-flex flex-row"
+      >
+        <span class="c-card__safe icon polygon mr-2"></span>
+        <span class="c-card__info">MATIC</span>
+      </div>
+      <div
+        *ngIf="owner && ownerUsername"
+        class="d-flex flex-row"
+      >
+        <span class="c-card__safe icon collections mr-2"></span>
+        <span class="c-card__info"> {{ ownerUsername }}</span>
+      </div>
+    </div>
+  </div>
+</a>
+<div class="modal fade"
+  id="offerModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="offerModalLabel"
+  aria-hidden="true"
+  #offerModal>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="MakeOfferModalLabel">Make an Offer</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="container">
+          <div class="row center">
+            <div class="col-lg-12 left p-t-15 p-b-10 ">
+              <span>Fee to Make Offer {{digiTradeMakeOffferFee / 1000000000000000000}} DIGI </span>
+              <button
+              class="btn btn-primary"
+              (click)="approveDigiForDigiTrade()"
+              *ngIf="!approvedDigiTradeToSpendDIGIforFees"
+            >
+              <span>Approve Digi</span>
+            </button>
+            </div>
+            <div class="col-lg-12 center p-t-15 p-b-10">
+              <div class="c-card__input-container">
+                <div class="d-flex">
+                  
+                  <label class="c-card__label">Input Offer Amount</label>
+                  <span class="c-card__balance">Balance: {{ paymentCurrencyBalanceDigiTrade / 1000000000000000000}}</span>
+                </div>
+                <div class="d-flex">
+                  <input
+                    type="number"
+                    name="input"
+                    [(ngModel)]="amountInput"
+                    (keyup)="calculate($event)"
+                    placeholder="0"
+                    class="c-card__input"
+                  />
+                  <div class="c-card__currency">
+                  <!-- <span class="icon logo-inverse"></span> -->
+                    <!-- <span class="c-card__currency-name"> -->
+                    
+
+                    <!-- </span>  -->
+                  </div>
+                </div>
+            </div>
+          </div>
+          <label>Currency:</label>
+          <ng-select
+            placeholder="Select Payment Currency"
+            [items]="currencyDropDownMaticDigiTrade"
+            bindLabel="name"
+            bindValue="id"
+            (change)="currencyHandlerDigiTrade()"
+            [(ngModel)]="paymentCurrencyDigiTrade"
+          ></ng-select>
+          <div class="col-lg-12 p-t-15">
+            <button
+              class="btn btn-primary"
+              (click)="approveTradeCurrencyForDigiTrade()"
+              *ngIf="!approvedDigiTradeSpendCurrency && paymentCurrencyNameDigiTrade"
+            >
+              <span>Approve {{paymentCurrencyNameDigiTrade}}</span>
+            </button>
+
+
+            <div class="col-lg-12">
+              <button
+                type="button"
+                class="btn btn-primary"
+                (click)="makeOffer()"
+                *ngIf="approvedDigiTradeSpendCurrency && approvedDigiTradeToSpendDIGIforFees"
+              >
+                Make Offer
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<ng-image-fullscreen-view
+  [images]="imageObject"
+  [imageIndex]="0"
+  [show]="showZoomImage"
+  [animationSpeed]="1"
+  (close)="closeEventHandler()">
+</ng-image-fullscreen-view>

@@ -1,0 +1,207 @@
+<div class="container page-top">
+  <div class="row">
+    <div class="col-12 p-t-10 p-b-6">
+      <span class="section-title">
+        <span class="icon box"></span>
+        Sell Token
+      </span>
+    </div>
+    <div class="solid mt-4 mb-4"></div>
+  </div>
+
+  <div class="row" *ngIf="sale && !pageLoading">
+    <div class="col-12 mt-4">
+      <p class="bold text-center">
+        This NFT is already for sale at the Marketplace.
+      </p>
+    </div>
+    <div class="mx-auto col-xl-4 col-lg-4 col-md-6 col-sm-12 p-t-40">
+      <app-digi-card
+        *ngIf="address == digibleNftAddress"
+        view="create-sell"
+        [id]="id"
+      ></app-digi-card>
+    </div>
+  </div>
+
+  <div class="row" *ngIf="pageLoading">
+    <div class="col">
+      <div class="mx-auto text-center mt-4 text-white">
+        <app-loading></app-loading>
+      </div>
+    </div>
+  </div>
+  
+  <div class="row" *ngIf="transactionLoading">
+    <div class="col">
+      <div class="mx-auto text-center mt-4 text-white">
+        <app-loading-blockchain></app-loading-blockchain>
+      </div>
+    </div>
+  </div>
+
+  <div class="row p-t-40 p-b-40" *ngIf="!sale && !pageLoading && !transactionLoading">
+    <div class="col-lg-4">
+      <a class="c-card">
+        <figure class="c-card__figure">
+          <img class="c-card__figure__video" [src]="data.image" alt="image" />
+        </figure>
+        <div class="c-card__body">
+          <div class="c-card__top">
+            <h1 class="c-card__title">
+              <span>{{ data.name }}</span>
+            </h1>
+          </div>
+          <div *ngIf="data && data.description" class="c-card__description">
+            <p>{{ data.description | truncate: [120, '...'] }}</p>
+          </div>
+          <div *ngIf="data && !data.description" class="c-card__description">
+            <p>No description has been created for this NFT.</p>
+          </div>
+        </div>
+        <div class="c-card__footer">
+          <div class="c-card__footer-inner">
+            <div *ngIf="data.physical" class="d-flex flex-row">
+              <span class="c-card__safe icon safe mr-2"></span>
+              <span class="c-card__info">Physically backed</span>
+            </div>
+            <div *ngIf="data.network === 'ETH'" class="d-flex flex-row">
+              <span class="c-card__safe icon ethereum mr-2"></span>
+              <span class="c-card__info">ERC-20</span>
+            </div>
+            <div *ngIf="data.network === 'MATIC'" class="d-flex flex-row">
+              <span class="c-card__safe icon polygon mr-2"></span>
+              <span class="c-card__info">MATIC</span>
+            </div>
+            <div
+              *ngIf="data.owner && data.ownerUsername"
+              class="d-flex flex-row"
+            >
+              <span class="c-card__safe icon collections mr-2"></span>
+              <span class="c-card__info">{{ data.ownerUsername }}</span>
+            </div>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div class="col-lg-8">
+      <div class="card shadow mb-4">
+        <div class="card-header py-3">
+          <h5 class="mt-2 font-weight-bold text-primary txt-title mb-0">
+            Sale Details
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-6">
+              <div class="d-flex flex-column">
+                <label>Price in $ {{ paymentCurrencyName }}:</label>
+                <input
+                  class="form-control form-control-user"
+                  placeholder="0.0"
+                  type="text"
+                  name="input"
+                  autocomplete="off"
+                  (ngModelChange)="onChangeInputAmount()"
+                  [(ngModel)]="inputAmount"
+                  style="height: 36px;"
+                />
+              </div>
+              
+              <div class="mt-2" *ngIf="inputAmount && !royaltyFee">
+                You will receive: {{ receiveAmount }}
+                {{ paymentCurrencyName }}
+              </div>
+
+              <div class="mt-2" *ngIf="inputAmount && royaltyFee">
+                You will receive: {{ receiveAmount }}
+                {{ paymentCurrencyName }}
+                <br />
+                <b>This NFT has a royalty fee of {{ royaltyFee }}%.</b>
+              </div>
+
+              <div class="mt-2" *ngIf="inputAmount && !royaltyFee">
+                You will receive: {{ receiveAmount }}
+                {{ paymentCurrencyName }}
+                <br />
+                <b>This NFT has no royalty.</b>
+              </div>
+
+              <div class="mt-2" *ngIf="inputAmount">
+                Listing price: {{ listingPrice }}
+                {{ paymentCurrencyName }}
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="user">
+                <div class="form-group">
+                  <label>Currency:</label>
+                  <ng-select 
+                    placeholder="Select Payment Currency"
+                    [items]="currencyDropDown"
+                    bindLabel="name"
+                    bindValue="id"
+                    (change)="currencyHandler($event)"
+                    [(ngModel)]="paymentCurrency"
+                  ></ng-select>  
+                </div>
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="mt-4" *ngIf="!selectedDate">
+                <p><strong>Sale End Date:</strong></p>
+                <dl-date-time-picker
+                  startView="day"
+                  maxView="year"
+                  minView="minute"
+                  minuteStep="5"
+                  [(ngModel)]="selectedDate"
+                ></dl-date-time-picker>
+              </div>
+              <div class="mt-4 row">
+                <div class="col-6">
+                  <span class="m-0" *ngIf="selectedDate">
+                    Current End date (Local):
+                  </span>
+                  <button
+                    class="btn btn-secondary mt-2 d-block"
+                    *ngIf="selectedDate"
+                    (click)="selectedDate = null"
+                  >
+                    Change Date
+                  </button>
+                </div>
+                <div class="col-6">
+                  <span>{{ selectedDate | date: 'YYYY-MM-dd HH:mm:ss' }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-12">
+              <button
+                class="btn btn-primary mt-4 w-100 text-center"
+                style="width: auto;"
+                *ngIf="isApproved"
+                (click)="sell()"
+                [disabled]="!inputAmount"
+              >
+                Sell
+              </button>
+
+              <div class="col-lg-6" *ngIf="!isApproved">
+                <button
+                  class="btn btn-primary full-width"
+                  (click)="approveSell()"
+                  *ngIf="!isApproved"
+                >
+                  Approve sell
+                </button>
+              
+
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,211 @@
+<a
+  *ngIf="data"
+  [routerLink]="'/details/' + data.network + '/' + data.token_id + '/' + data.token_address"
+  class="c-card"
+  [ngClass]="{ auction: auction === true, back: backSide === true }"
+>
+  <figure class="c-card__figure">
+    <lib-ngx-image-zoom
+      *ngIf="!isVideo && view === 'details'"
+      class="c-card__figure__video"
+      [zoomMode]="'click'"
+      [enableLens]="true"
+      [thumbImage]="data.tokenData.image"
+      [fullImage]="data.tokenData.image"
+    ></lib-ngx-image-zoom>
+    <img
+      *ngIf="data.tokenData && data.tokenData.image"
+      class="c-card__figure__video"
+      [src]="data.tokenData.image"
+      alt="image"
+    />
+
+    <video
+      *ngIf="isVideo"
+      oncanplay="this.muted = true"
+      id="video-plyer"
+      ref="videoRef"
+      class="c-card__figure__video bg-video"
+      autoplay
+      muted
+      playsinline
+      loop
+      [src]="data.tokenData.image"
+    ></video>
+    <div
+      *ngIf="data.auction && data.auctionOrSaleData.endDate"
+      class="c-card__countdown"
+    >
+      <countdown #cd [config]="config"></countdown> 
+      <span class="ml-2">Left</span>
+      <span class="icon auctions p-0"></span>
+    </div>
+  </figure>
+  <figure class="c-card__figure" *ngIf="backSide">
+    <lib-ngx-image-zoom
+      *ngIf="!isBackVideo && view === 'details'"
+      class="c-card__figure__video"
+      [zoomMode]="'click'"
+      [enableLens]="true"
+      [thumbImage]="backImage"
+      [fullImage]="backImage"
+    ></lib-ngx-image-zoom>
+    <video
+      *ngIf="isBackVideo"
+      ref="videoRef"
+      class="c-card__figure__video"
+      autoplay
+      muted
+      playsinline
+      loopO
+      [src]="backImage"
+    ></video>
+    <p>{{ auctionOrSaleData }}</p>
+    <div
+      *ngIf="auctionOrSaleData && endDate"
+      class="c-card__countdown"
+    >
+      <countdown #cd [config]="config"></countdown>
+      <span class="ml-2">Left</span>
+      <span class="icon auctions p-0"></span>
+    </div>
+  </figure>
+  <div *ngIf="view !== 'details'" class="c-card__body">
+    <div class="c-card__top">
+      <h1 *ngIf="data.tokenData && data.tokenData.name" class="c-card__title m-0">
+        <span>{{ data.tokenData.name }}</span>
+      </h1>
+      <div class="c-card__price" *ngIf="paymentToken && data.price.length > 0">
+        <span class="mr-2">{{ data.price }}</span>
+        <div class="d-flex align-items-center">
+          <img [src]="paymentToken.logoURL" class="icon" [title]="paymentToken.displayName" />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="c-card__footer">
+    <ng-container class="mb-4" *ngIf="view !== 'details'">
+      <ul class="c-card__list">
+        <li *ngFor="let desc_item of description | keyvalue: keepOriginalOrder">
+          <div
+            *ngIf="
+              desc_item.key !== 'backCardImage' &&
+              desc_item.key !== 'description'
+            "
+            class="row"
+          >
+            <div class="bold text-capitalize col-6">
+              <span>{{ desc_item.key }}:</span>
+            </div>
+            <div class="col-6">
+              <span>{{ desc_item.value || "..." }}</span>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </ng-container>
+    <div class="c-card__footer-inner">
+      <div *ngIf="physical === 'Yes'" class="d-flex flex-row">
+        <span class="c-card__safe icon safe mr-2"></span>
+        <span class="c-card__info">Physically backed</span>
+      </div>
+      <div
+        *ngIf="view !== 'details' && data.network === 'ETH'"
+        class="d-flex flex-row"
+      >
+        <span class="c-card__safe icon ethereum mr-2"></span>
+        <span class="c-card__info">ERC-20</span>
+      </div>
+      <div
+        *ngIf="view !== 'details' && data.network === 'MATIC'"
+        class="d-flex flex-row"
+      >
+        <span class="c-card__safe icon polygon mr-2"></span>
+        <span class="c-card__info">MATIC</span>
+      </div>
+      <div
+        *ngIf="owner && ownerUsername && view !== 'details'"
+        class="d-flex flex-row"
+      >
+        <span class="c-card__safe icon collections mr-2"></span>
+        <span class="c-card__info"> {{ ownerUsername }}</span>
+      </div>
+    </div>
+    <div
+      *ngIf="
+        owner && 
+        address && 
+        owner.toLowerCase() !== address.toLowerCase() &&
+        price &&
+        !auction &&
+        view !== 'details' &&
+        view !== 'profile' &&
+        view !== 'create-sell' &&
+        owner !== '0x000000000000000000000000000000000000dEaD'
+      "
+    >
+      <span class="c-card__button btn btn-primary">BUY NOW</span>
+    </div>
+    <div
+      *ngIf="
+        owner && 
+        address && 
+        owner.toLowerCase() !== address.toLowerCase() &&
+        !price &&
+        !auction &&
+        view !== 'details' &&
+        view !== 'profile' &&
+        view !== 'create-sell' &&
+        owner !== '0x000000000000000000000000000000000000dEaD'
+      "
+    >
+      <span class="c-card__button btn btn-secondary">NOT FOR SALE</span>
+    </div>
+    <div
+      *ngIf="
+        owner && 
+        address && 
+        owner.toLowerCase() === address.toLowerCase() &&
+        view !== 'profile' &&
+        view !== 'create-sell' &&
+        view !== 'details'
+      "
+    >
+      <span class="c-card__button btn">ITS YOURS</span>
+    </div>
+    <div
+      *ngIf="
+        owner &&
+        address &&
+        owner.toLowerCase() !== address.toLowerCase() &&
+        auction &&
+        view !== 'details' &&
+        view !== 'create-sell' &&
+        view !== 'profile' &&
+        owner !== '0x000000000000000000000000000000000000dEaD'
+      "
+    >
+      <button class="c-card__button btn btn-primary">
+        <span *ngIf="price != null && !auction">BUY NOW</span>
+        <span *ngIf="price != null && auction">BID NOW</span>
+        <span *ngIf="price == null">DETAILS</span>
+      </button>
+    </div>
+    <div>
+      <span
+        *ngIf="
+          owner === '0x000000000000000000000000000000000000dEaD' && physical
+        "
+        class="c-card__button btn"
+        >CARD CLAIMED
+      </span>
+      <span
+        *ngIf="
+          owner === '0x000000000000000000000000000000000000dEaD' && !physical
+        "
+        class="c-card__button btn"
+        >CARD BURNED
+      </span>
+    </div>
+  </div>
+</a>

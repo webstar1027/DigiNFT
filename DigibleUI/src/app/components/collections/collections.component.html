@@ -1,0 +1,75 @@
+<div class="container p-b-40 page-top">
+  <div class="row c-page-title">
+    <div class="col-12 p-t-10 p-b-6">
+      <h1 class="font-weight-bold text-blue text-center">Collections</h1>
+    </div>
+    <div class="solid mt-4 mb-4"></div>
+  </div>
+  <div class="row" *ngIf="!searchReady">
+    <div class="col">
+      <div class="mx-auto text-center mt-4 mb-4 text-white">
+        <app-loading></app-loading>
+      </div>
+    </div>
+  </div>
+  <div
+    class="row"
+    *ngIf="verifiedCollections && verifiedCollections.length === 0"
+  >
+    <div class="col">
+      <div class="mx-auto text-center mt-4 mb-4 text-white">
+        <b>No data available</b>
+      </div>
+    </div>
+  </div>
+  <div
+    class="justify-center row"
+    id="list-result"
+    *ngIf="searchReady"
+  >
+    <div *ngFor="let dos of verifiedCollections; let i = index" class="col">
+      <a href="profile/{{ dos.id }}" class="c-collection">
+        <div class="c-collection__image">
+          <img
+            *ngIf="dos.hero_picture"
+            width="100%"
+            height="100%"
+            [src]="dos.hero_picture"
+            alt=""
+          />
+          <img
+            *ngIf="!dos.imageUrl"
+            width="100%"
+            height="100%"
+            src="/assets/images/home/home-1.png"
+            alt=""
+          />
+        </div>
+        <div
+          class="c-collection__circle"
+          [ngStyle]="{
+            'background-image':
+              dos && dos.picture ? 'url(' + dos.picture + ')' : ''
+          }"
+        >
+          <span *ngIf="dos && !dos.picture" class="icon collections"></span>
+        </div>
+        <div class="c-collection__body">
+          <h2 class="c-collection__title mb-2">{{ dos.username }}</h2>
+        </div>
+      </a>
+    </div>
+  </div>
+  <!-- <div class="row center p-t-10">
+    <div class="col-lg-12">
+      <button *ngIf="loading" class="btn btn-primary mt-4 mb-4">. . .</button>
+      <button
+        *ngIf="!loading && nftList != null && !endReached"
+        class="btn btn-primary mt-4 mb-4"
+        (click)="loadMore()"
+      >
+        Load more
+      </button>
+    </div>
+  </div> -->
+</div>

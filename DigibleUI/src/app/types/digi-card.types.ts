@@ -1,0 +1,26 @@
+export type DigiCard = {
+  token_address?: string; 
+  amount?: string;
+  block_number?: string;
+  contract_type?: string;
+  block_number_minted?: string;
+  metadata?: string;
+  network?: string;
+  name?:string;
+  owner_of?:string;
+  token_id?:string;
+  token_uri?:string;
+  synced_at?:string;
+  symbol?:string;
+  id?: number;
+  price?: number;
+  auction?: boolean;
+  nftAddress?: string;
+  description?: string;
+  image?: string;
+  physical?: boolean;
+  isCube?: boolean;
+  auctionOrSaleData?: object;
+  isSearch?: boolean;
+  forSale?: boolean;
+};

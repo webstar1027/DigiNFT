@@ -1,0 +1,734 @@
+<div class="bg-white">
+  <!-- <div class="c-pre-header">
+    <p>
+      Everything currently runs on polygon...
+      <a
+        class="c-nav__item col-6"
+        href="https://s78dn46r19t.typeform.com/to/KfmYkiGQ"
+        target="popup"
+      >
+        <span class="c-nav__span">Verified Collector Registration is Open</span>
+      </a>
+    </p>
+  </div> -->
+
+  <div class="c-pre-header" style="background-color:cyan;">
+    <p>
+      🇺🇦🇺🇦🇺🇦 Stand With Ukraine! 🌻🌻🌻
+      <a
+        class="c-nav__item col-6"
+        href="https://twitter.com/Ukraine/status/1497594592438497282?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1497594592438497282%7Ctwgr%5E%7Ctwcon%5Es1_c10&ref_url=https%3A%2F%2Fwww.buzzfeednews.com%2Farticle%2Fkatienotopoulos%2Fukraine-has-asked-for-donations-in-crypto-to-help-fight"
+        target="popup"
+      >
+        <span class="c-nav__span"> 🌻🌻🌻 SEND UKRAINE (COME BACK ALIVE) OFFICIAL UKRAINE LINK HERE 🇺🇦🇺🇦🇺🇦 </span>
+      </a>
+    </p>
+  </div>
+
+  <header class="c-header" [ngClass]="{ shadow: router.url === '/' }">
+    <div class="c-header__inner">
+      <a [routerLink]="['/']" class="d-flex c-header__logo-link">
+        <span class="icon logo c-header__logo"></span>
+      </a>
+      <div class="c-header__search">
+       <!--  <input
+          id="searchInp"
+          for="searchInp"
+          (keypress)="findResult($event)"
+          class="c-header__search-bar"
+          type="search"
+          name="q"
+          placeholder="Search by name or description..."
+          aria-label="Search through site content"
+        /> -->
+
+        <ng-autocomplete
+          (inputChanged)='onChangeSearch($event)'
+          (inputFocused)='onFocused($event)'
+          (selected)='selectEvent($event)'
+          [data]="autocompleteList"
+          [itemTemplate]="itemTemplate"
+          [notFoundTemplate]="notFoundTemplate"
+          [searchKeyword]="keyword">
+        </ng-autocomplete>
+
+        <ng-template #itemTemplate let-item>
+          <a href="{{'/details/MATIC/'+item.token_id + '/' + item.token_address}}" style="display: flex;">
+            <img [src]="item.image" alt="item" class="auto-complete-image">
+            <span [innerHTML]="item.name"></span>
+          </a>
+        </ng-template>
+
+        <ng-template #notFoundTemplate let-notFound>
+          <div [innerHTML]="notFound"></div>
+        </ng-template>
+        <div class="c-header__search-button">
+          <span class="icon search c-header__svg-search"></span>
+        </div>
+      </div>
+      <div class="c-header__icons">
+        <div class="position-relative chain-dropdown mr-0 mr-md-3 ml-2" (mouseleave)="toggleChainDropdown(false)" *ngIf="address && network">
+          <img [src]="chainList[network]" class="cursor-pointer" width="32" height="32" (click)="toggleChainDropdown(true)" />
+          <div *ngIf="chainDropdown == true" class="position-absolute d-flex flex-column chain-dropdown-list shadow">
+            <!-- <div (click)="switchNetwork('Ethereum')">
+              <img [src]="chainList['Ethereum']" width="32" height="32" />
+            </div> -->
+            <div (click)="switchNetwork('Matic')">
+              <img [src]="chainList['Matic']" width="32" height="32" />
+            </div>
+            <div (click)="switchNetwork('Binance')">
+              <img [src]="chainList['Binance']" width="32" height="32" />
+            </div>
+          </div>
+        </div>
+        <a
+          *ngIf="address"
+          [routerLink]="['/create']"
+          class="btn btn-primary mr-2 btn-buy-sell"
+        >
+          <span>Create NFT</span>
+        </a>
+        <a
+          [routerLink]="['/purchase']"
+          class="btn btn-transparent btn-buy-digi"
+        >
+          <span>Buy $DIGI</span>
+        </a>
+        <div class="theme-switch-wrapper">
+          <label class="theme-switch" for="checkbox">
+            <input id="checkbox" type="checkbox"/>
+            <div class="slider round"></div>
+          </label>
+        </div>
+        <div (click)="mobileMenuToggle()" class="c-hamburger">
+          <div class="c-hamburger__inner">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+  <div *ngIf="this.router.url !== '/'" class="c-section-titles">
+    <h1 class="section-title">{{ routeName }}</h1>
+  </div>
+  <div class="c-burger-menu">
+    <nav class="c-burger-menu__nav">
+      <a
+        *ngIf="address"
+        class="c-nav__item"
+        [routerLink]="['/for-sale/create']"
+      >
+        <span class="c-nav__span">Sell NFT</span>
+      </a>
+      <a *ngIf="address" class="c-nav__item" [routerLink]="['/create']">
+        <span class="c-nav__span">Create NFT</span>
+      </a>
+      <a
+        class="c-nav__item"
+        href="/assets/pdf/DigibleLitepaper.pdf"
+        target="_blank"
+      >
+        <span class="c-nav__span">Litepaper</span>
+      </a>
+      <a
+        class="c-nav__item"
+        (click)="mobileMenuToggle()"
+        [routerLink]="['/digi-team']"
+      >
+        <span class="c-nav__span">Team</span>
+      </a>
+      <a
+        class="c-nav__item"
+        (click)="mobileMenuToggle()"
+        [routerLink]="['/digi-safe']"
+      >
+        <span class="c-nav__span">DIGI Safe</span>
+      </a>
+      <a
+        class="c-nav__item"
+        (click)="mobileMenuToggle()"
+        [routerLink]="['/digi-grade']"
+      >
+        <span class="c-nav__span">DIGI Grade</span>
+      </a>
+      <a
+        class="c-nav__item"
+        (click)="mobileMenuToggle()"
+        [routerLink]="['/digi-farm']"
+      >
+        <span class="c-nav__span">DIGI Farm</span>
+      </a>
+      <a
+        class="c-nav__item"
+        (click)="mobileMenuToggle()"
+        [routerLink]="['/digi-track']"
+      >
+        <span class="c-nav__span">DIGI Track</span>
+      </a>
+      <a
+        class="c-nav__item"
+        (click)="mobileMenuToggle()"
+        [routerLink]="['/digi-duel']"
+      >
+        <span class="c-nav__span">DIGI Duel</span>
+      </a>
+      <a
+        class="c-nav__item"
+        (click)="mobileMenuToggle()"
+        [routerLink]="['/faq']"
+      >
+        <span class="c-nav__span">FAQ</span>
+      </a>
+      <a
+        class="c-nav__item"
+        (click)="mobileMenuToggle()"
+        target="_blank"
+        href="https://www.youtube.com/watch?v=yWfZnjkhhhg&ab_channel=EveryBitHelps"
+      >
+        <span class="c-nav__span">How to setup a wallet</span>
+      </a>
+      <a class="c-nav__item" href="/assets/pdf/Audit.pdf" target="_blank">
+        <span class="c-nav__span">Download Audit</span>
+      </a>
+    </nav>
+  </div>
+  <nav class="c-nav">
+    <div class="c-nav__top">
+      <a
+        class="c-nav__item auctions"
+        [routerLink]="['/auctions']"
+        routerLinkActive="active-route"
+      >
+        <i class="icon auctions mb-2"></i>
+        <span class="c-nav__span">Auctions</span>
+      </a>
+      <a
+        class="c-nav__item"
+        [routerLink]="['/for-sale']"
+        routerLinkActive="active-route"
+      >
+        <span class="icon duels mb-2"></span>
+        <span class="c-nav__span">For Sale</span>
+      </a>
+      <a
+        class="c-nav__item"
+        [routerLink]="['/collections']"
+        routerLinkActive="active-route"
+      >
+        <span class="icon collections mb-2"></span>
+        <span class="c-nav__span">Collections</span>
+      </a>
+      <a
+        class="c-nav__item"
+        [routerLink]="['/stake']"
+        routerLinkActive="active-route"
+      >
+        <i class="icon staking mb-2"></i>
+        <div class="network">
+          <div class="network__inner">
+            <i class="icon polygon"></i>
+          </div>
+          <!-- <p>Polygon</p> -->
+        </div>
+        <span class="c-nav__span">Stake</span>
+      </a>
+      <a *ngIf="!address" class="c-nav__item" 
+        id="editDescriptionModal"
+        data-toggle="modal"
+        data-target="#walletModal"
+        #editDescriptionModal
+      >
+        <span class="icon wallets mb-2"></span>
+        <span class="c-nav__span">Wallet</span>
+      </a>
+      <a
+        *ngIf="address"
+        class="c-nav__item"
+        routerLinkActive="active-route"
+        [routerLink]="['/profile/', address]"
+      >
+        <span class="icon user mb-2"></span>
+        <span class="c-nav__span">Profile</span>
+      </a>
+    </div>
+  </nav>
+</div>
+<section id="wrapper">
+  <div id="content-wrapper" class="d-flex flex-column">
+    <div id="content">
+      <router-outlet (activate)="changeOfRoutes()"></router-outlet>
+    </div>
+  </div>
+</section>
+
+<div
+  class="modal fade"
+  id="searchModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="searchModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="searchModalLabel">Search NFT</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-12 p-t-15">
+              <form class="user">
+                <div class="form-group">
+                  <input
+                    type="text"
+                    class="form-control form-control-user"
+                    placeholder="Search by name..."
+                    [(ngModel)]="inputNftName"
+                    (ngModelChange)="onChangeInput()"
+                    name="nftName"
+                  />
+                </div>
+              </form>
+            </div>
+          </div>
+          <div class="row p-t-15 p-b-10 center justify-center">
+            <div class="col-lg-12">
+              <button type="button" class="btn btn-primary">Search NFT</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+    class="modal fade"
+    id="walletModal"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="walletDescription"
+    aria-hidden="true"
+    #walletModal
+  >
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="walletModalLabel">Choose Wallet</h5>
+          <button
+            type="button"
+            class="close"
+            id="walletModalCloseBtn"
+            data-dismiss="modal"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12"  style="text-align: center;" *ngIf="!isMetamaskUnVisible">
+              <div class="wallet-btn" (click)="connectWallet('metamask')">
+                <img src="../../assets/images/metamask.svg" class="icon-group">
+                <h4 style="margin: 1rem 0rem; font-weight: bold; color: black;">MetaMask</h4>
+                <h6>Connect to your metamask wallet</h6>
+              </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12"  style="text-align: center;">
+              <div class="wallet-btn" (click)="connectWallet('walletconnect')">
+                <img src="../../assets/images/WalletConnect.svg" class="wallet-icon">
+                <h4 style="margin: 1rem 0rem; font-weight: bold; color: black;">WalletConnect</h4>
+                <h6>Scan with walletconnect to connect</h6>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="c-footer__logos">
+  <div class="row container m-auto justify-center">
+    <div
+      class="col-lg-3 col-md-4 col-sm-6 pb-4 pt-4 d-flex items-center justify-center"
+    >
+      <img
+        style="max-width: 200px; max-height: 50px;"
+        src="../../../assets/images/logos/sl-logo.png"
+        alt=""
+      />
+    </div>
+    <div
+      class="col-lg-3 col-md-4 col-sm-6 pb-4 pt-4 d-flex items-center justify-center"
+    >
+      <img
+        style="max-width: 150px; max-height: 50px;"
+        src="../../../assets/images/logos/inc-logo.png"
+        alt=""
+      />
+    </div>
+    <div
+      class="col-lg-3 col-md-4 col-sm-6 pb-4 pt-4 d-flex items-center justify-center"
+    >
+      <img
+        style="max-width: 150px; max-height: 50px;"
+        src="../../../assets/images/logos/Chainlink_Logo_Blue.png"
+        alt=""
+      />
+    </div>
+
+    <div
+      class="col-lg-3 col-md-4 col-sm-6 pb-4 pt-4 d-flex items-center justify-center"
+    >
+      <img
+        alt=""
+        src="../../../assets/images/logos/EPNSlogofull_1.png"
+        style="max-width: 150px; max-height: 50px;"
+      />
+    </div>
+
+
+    <div
+      class="col-lg-3 col-md-4 col-sm-6 pb-4 pt-4 d-flex items-center justify-center"
+    >
+      <img
+        style="max-width: 150px; max-height: 50px;"
+        src="../../../assets/images/logos/scotty-logo-long.png"
+        alt=""
+      />
+    </div>
+    <div
+      class="col-lg-3 col-md-4 col-sm-6 pb-4 pt-4 d-flex items-center justify-center"
+    >
+      <img
+        style="max-height: 50px;"
+        src="../../../assets/images/logos/psalogo.png"
+        alt=""
+      />
+    </div>
+    <div
+      class="col-lg-3 col-md-4 col-sm-6 pb-4 pt-4 d-flex items-center justify-center"
+    >
+      <img
+        style="max-height: 50px;"
+        src="../../../assets/images/logos/cgc-logo.png"
+        alt=""
+      />
+    </div>
+    <div
+      class="col-lg-3 col-md-4 col-sm-6 pb-4 pt-4 d-flex items-center justify-center"
+    >
+      <img
+        style="max-height: 50px;"
+        src="../../../assets/images/logos/logo-aoki.png"
+        alt=""
+      />
+    </div>
+
+    <div
+      class="col-lg-3 col-md-4 col-sm-6 pb-4 pt-4 d-flex items-center justify-center"
+    >
+      <img
+        alt=""
+        src="../../../assets/images/logos/DigiWaxTrans.png"
+        style="max-width: 150px; max-height: 50px;"
+      />
+    </div>
+
+  </div>
+
+
+</div>
+<footer class="c-footer">
+  <div class="c-footer__body container">
+    <div class="row pb-4">
+      <div class="col-lg-7">
+        <div class="mailing">
+          <h1>Stay in the loop</h1>
+          <p>
+            Join our mailing list to stay in the loop with our newest feature
+            releases, NFT drops, and tips and tricks for navigating Digible.
+          </p>
+          <form #subscribeForm="ngForm" (ngSubmit)="subscribe(subscribeForm)">
+            <div *ngIf="email.invalid && (email.dirty || email.touched)">
+              <div *ngIf="email.errors.required">Email is required.</div>
+            </div>
+            <input
+              pattern="\S+@\S+\.\S+"
+              placeholder="Email"
+              required
+              #email="ngModel"
+              name="userName"
+              class="required email c-footer__input"
+              [(ngModel)]="subscribeData.email"
+            />
+            <button
+              mat-raised-button
+              type="submit"
+              class="btn btn-secondary c-footer__submit"
+            >
+              Subscribe
+            </button>
+          </form>
+        </div>
+      </div>
+      <div class="col-lg-5">
+        <div class="c-footer__community">
+          <h3 class="c-footer__title bold">Join our community</h3>
+          <div class="social">
+
+            <a
+              class="social-item mr-2"
+              href="https://discord.gg/VRs9gxJjvv"
+              target="_blank"
+            >
+              <i class="icon fab fa-discord"></i>
+            </a>
+
+            <a
+              class="social-item mr-2"
+              href="https://twitter.com/digibleio"
+              target="_blank"
+            >
+              <i class="icon fab fa-twitter"></i>
+            </a>
+
+
+            <a
+              class="social-item mr-2"
+              href="https://t.me/digiblechat"
+              target="_blank"
+            >
+              <i class="icon fab fa-telegram"></i>
+            </a>
+            <a
+              class="social-item mr-2"
+              href="https://digibleio.medium.com/"
+              target="_blank"
+            >
+              <i class="icon fab fa-medium"></i>
+            </a>
+            <a
+              class="social-item mr-2"
+              href="https://github.com/digible"
+              target="_blank"
+            >
+              <i class="icon fab fa-github"></i>
+            </a>
+            <a
+              class="social-item mr-2"
+              href="https://www.instagram.com/digible.io/"
+              target="_blank"
+            >
+              <i class="icon fab fa-instagram"></i>
+            </a>
+
+            <a
+              class="social-item mr-2"
+              href="https://www.youtube.com/c/DIGIBLEIO"
+              target="_blank"
+            >
+              <i class="icon fab fa-youtube"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row separate pb-4">
+      <div class="col-lg-7">
+        <div class="mt-4">
+          <div class="digi">
+            <div class="d-flex c-header__logo-link mb-4">
+              <a [routerLink]="['/']" class="icon logo c-footer__logo"></a>
+            </div>
+            <p class="c-footer__strapline">
+              The world's first collector's metaverse & NFT marketplace backed by rare physical
+              collectibles (#phygitals).
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-5">
+        <div id="nav" class="c-footer__menu">
+          <nav class="c-footer__menu-nav row">
+            <a class="c-nav__item col-6" [routerLink]="['/create']">
+              <span class="c-nav__span">Create NFT</span>
+            </a>
+            <a class="c-nav__item col-6" [routerLink]="['/digiwax/MATIC/box']">
+              <span class="c-nav__span">DigiWax</span>
+            </a>
+            <a class="c-nav__item col-6" [routerLink]="['/digi-road-map']">
+              <span class="c-nav__span">Road Map</span>
+            </a>
+            <a
+              class="c-nav__item col-6"
+              href="https://s78dn46r19t.typeform.com/to/KfmYkiGQ"
+              target="popup"
+            >
+              <span class="c-nav__span">Become a Verified Collector</span>
+            </a>
+
+            <a class="c-nav__item col-6" [routerLink]="['/digi-team']">
+              <span class="c-nav__span">Team</span>
+            </a>
+            <a class="c-nav__item col-6" [routerLink]="['/purchase']">
+              <span class="c-nav__span">Buy DIGI</span>
+            </a>
+            <a class="c-nav__item col-6" [routerLink]="['/digi-safe']">
+              <span class="c-nav__span">DIGI Safe</span>
+            </a>
+            <a class="c-nav__item col-6" [routerLink]="['/digi-grade']">
+              <span class="c-nav__span">DIGI Grade</span>
+            </a>
+            <a class="c-nav__item col-6" [routerLink]="['/digi-farm']">
+              <span class="c-nav__span">DIGI Trade</span>
+            </a>
+            <a class="c-nav__item col-6" [routerLink]="['/digi-track']">
+              <span class="c-nav__span">DIGI Track</span>
+            </a>
+            <a class="c-nav__item col-6" [routerLink]="['/digi-duel']">
+              <span class="c-nav__span">DIGI Duel</span>
+            </a>
+            <a class="c-nav__item col-6" [routerLink]="['/faq']">
+              <span class="c-nav__span">FAQ</span>
+            </a>
+            <a
+              class="c-nav__item col-6"
+              (click)="mobileMenuToggle()"
+              target="_blank"
+              href="https://www.youtube.com/watch?v=yWfZnjkhhhg&ab_channel=EveryBitHelps"
+            >
+              <span class="c-nav__span">Set up a wallet</span>
+            </a>
+            <a
+              class="c-nav__item col-6"
+              href="/assets/pdf/Audit.pdf"
+              target="_blank"
+            >
+              <span class="c-nav__span">Download Audit</span>
+            </a>
+          </nav>
+        </div>
+      </div>
+    </div>
+    <div class="row separate d-flex">
+      <div class="c-footer__company">
+        <a href="https://www.digible.io">© Digible LLC 2021, 2022. All rights reserved. </a>
+        <br> By using this site and Web3 component, which are inherently dangerous, you accept the inherent risk
+             involved in crypto assets, web3,
+             such as hacking, phishing, security breaches, blockchain outages, etc. All external links are subject to
+             Terms and Conditions of their respective owners. Registered Trademarks belong to the owners.
+      </div>
+      <div class="c-footer__socials">
+        <a [routerLink]="['/privacy-policy']">Privacy Policy</a>
+        <!-- <span class="pr-2 pl-2">|</span>
+        <a [routerLink]="['/terms-and-conditions']">Terms and Conditions</a> -->
+      </div>
+      <div class="c-network" *ngIf="!hideNetwork">
+        <span>Network: {{ network }}</span>
+        <br/>
+        <span class="testnet" *ngIf="testnet">Testnet: Yes</span>
+        <br/>
+        <span>Date: {{ currentTime }}</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- <div *ngIf="popUp" class="pop-up" [@fade]="popUp">
+	<div class="pop-up-overlay"></div>
+	<button
+		(click)="popUp = false"
+		type="button"
+		class="pop-up-close"
+		data-dismiss="modal"
+		aria-label="Close"
+	>
+		<span aria-hidden="true">&times;</span>
+	</button>
+	<img
+		class="mb-4 logo"
+		width="200"
+		src="../../assets/images/logo-link.png"
+		alt=""
+	/>
+	<div class="svg-logo">
+		<svg
+			version="1.1"
+			id="Layer_1"
+			xmlns="http://www.w3.org/2000/svg"
+			xmlns:xlink="http://www.w3.org/1999/xlink"
+			x="0px"
+			y="0px"
+			viewBox="0 0 74.9 74.9"
+			style="enable-background: new 0 0 74.9 74.9"
+			xml:space="preserve"
+		>
+			<path
+				style="fill: #ffffff"
+				d="M70.7,5.9c0-0.9-0.8-1.7-1.7-1.7H18.8c-0.4,0-0.7,0.1-1,0.3l0,0l0,0c-0.1,0.1-0.2,0.2-0.3,0.3
+	C15.5,6.8,5.3,16.8,5,17.1c-0.3,0.3-0.5,0.7-0.5,1.2v50.2c0,0.9,0.8,1.7,1.7,1.7h50.2c0.4,0,0.8-0.2,1.1-0.4
+	c0.3-0.3,11.1-10.9,12.6-12.4c0,0,0.1-0.1,0.1-0.1c0,0,0,0,0,0l0,0c0.2-0.3,0.4-0.7,0.4-1.1V5.9z"
+			/>
+			<path
+				style="fill: #2af6ff"
+				d="M44.6,16.3h-0.7H31.4c-0.8,0-1.5,0.7-1.5,1.5v27.7c0,0.8,0.7,1.5,1.5,1.5h12.6h0.7
+	c8.1,0,14.7-6.6,14.7-14.7V31C59.3,22.9,52.7,16.3,44.6,16.3z M51.4,32c0,4.4-3.1,8-6.9,8h-0.3h-5.9c-0.4,0-0.7-0.4-0.7-0.8V24.1
+	c0-0.5,0.3-0.8,0.7-0.8h5.9h0.3c3.8,0,6.9,3.6,6.9,8V32z"
+			/>
+			<path
+				style="fill: #1823f1"
+				d="M70.7,5.9c0-0.9-0.8-1.7-1.7-1.7H18.8c-0.4,0-0.7,0.1-1,0.3l0,0l0,0c-0.1,0.1-0.2,0.2-0.3,0.3
+	C15.5,6.8,5.3,16.8,5,17.1c-0.3,0.3-0.5,0.7-0.5,1.2v50.2c0,0.9,0.8,1.7,1.7,1.7h50.2c0.4,0,0.8-0.2,1.1-0.4
+	c0.3-0.3,11.1-10.9,12.6-12.4c0,0,0.1-0.1,0.1-0.1c0,0,0,0,0,0l0,0c0.2-0.3,0.4-0.7,0.4-1.1V5.9z M19.8,6.9H68v48.2H19.8V6.9z
+	 M17.1,9v46.7l-9.9,9.9V18.7C8.1,17.8,13.6,12.4,17.1,9z M56,67.5H9l9.7-9.7c0,0,0,0,0,0h47C62.3,61.3,56.9,66.6,56,67.5z"
+			/>
+			<path
+				style="fill: #1823f1"
+				d="M44.6,18.9c6.7,0,12.1,5.4,12.1,12.1v1.2c0,6.7-5.4,12.1-12.1,12.1h-0.7H32.5V18.9h11.4H44.6
+	 M44.6,16.3L44.6,16.3h-0.7H31.4c-0.8,0-1.5,0.7-1.5,1.5v27.7c0,0.8,0.7,1.5,1.5,1.5h12.6h0.7h0c8.1,0,14.7-6.6,14.7-14.7V31
+	C59.3,22.9,52.7,16.3,44.6,16.3L44.6,16.3z"
+			/>
+			<path
+				style="fill: #1823f1"
+				d="M44.5,25.9c2.3,0,4.2,2.4,4.2,5.4V32c0,3-1.9,5.4-4.2,5.4h-0.3h-3.9V25.9h3.9H44.5 M44.5,23.3
+	L44.5,23.3h-0.3h-5.9c-0.4,0-0.7,0.4-0.7,0.8v15.1c0,0.5,0.3,0.8,0.7,0.8h5.9h0.3h0c3.8,0,6.9-3.6,6.9-8v-0.7
+	C51.4,26.9,48.3,23.3,44.5,23.3L44.5,23.3z"
+			/>
+			<path
+				style="
+					fill: none;
+					stroke: #1823f1;
+					stroke-width: 2.2943;
+					stroke-miterlimit: 10;
+				"
+				d="M29.8,32.3"
+			/>
+		</svg>
+	</div>
+	<div class="text">
+		<h1 class="bold">Welcome to Digible.io.</h1>
+		<h3 class="bold">
+			V2 is imminent and we are gearing up for the full release of the Digible
+			dApp.
+		</h3>
+		<p class="text-lg">
+			This dApp is currently not yet fully functional. We are in the process of
+			making the relevant changes to our smart contract in order to facilitate
+			the new functionality within this application. The site functionality has
+			been locked until we have finalized this blockchain work.
+		</p>
+	</div>
+</div> -->

@@ -1,0 +1,118 @@
+<div class="container page-top">
+  <div class="row c-page-title">
+    <div class="col-12 p-t-10 p-b-6">
+      <h1 class="font-weight-bold text-blue text-center">For Sale</h1>
+    </div>
+    <div class="solid mt-4 mb-4"></div>
+  </div>
+<!--   <div class="row">
+    <div class="col-md-8 col-lg-9 p-t-10 p-b-6 mobile-hidden">
+      <div class="section-title">
+        <span class="icon binoculars"></span>
+        <span>For Sale</span>
+      </div>
+    </div>
+    <div class="col-md-4 col-lg-3 right" *ngIf="!showSwitchToEthereum">
+      <ng-select
+        placeholder="Filter By"
+        [items]="filterBy"
+        bindLabel="name"
+        bindValue="id"
+        (change)="changeFilter()"
+        [(ngModel)]="typeFilter"
+      >
+      </ng-select>
+    </div>
+    <div class="solid mt-4 mb-4"></div>
+  </div> -->
+  <div *ngIf="!loading">
+    <div class="row" *ngIf="nftList && nftList.length == 0">
+      <div class="col">
+        <div class="mx-auto text-center mt-4 mb-4">
+          <b>There are no NFTs for sale at this moment. Come back soon!</b>
+        </div>
+      </div>
+    </div>
+
+    <div class="row" *ngIf="nftList != null && nftList.length > 0 && innerWidth > 992">
+      <div
+        *ngFor="let nft of nftList"
+        class="col-sm-12"
+      >
+        <h4 class="collection-name"> {{nft['key']}} </h4>
+        <carousel
+          [arrowsTheme]="dark"
+          [cellsToShow]="4"
+          [margin]="100"
+        >
+          <div class="carousel-cell" *ngFor="let item of nft['value']">
+            <app-digi-card-sale
+              class="c-card-container"
+              id="{{ item.id }}"
+              price="{{ item.price }}"
+              [data]="item"
+            ></app-digi-card-sale>
+          </div>
+        </carousel>
+        <hr/>
+      </div>
+    </div>
+
+    <div class="row" *ngIf="nftList != null && nftList.length > 0 && innerWidth > 420 && innerWidth < 992">
+      <div
+        *ngFor="let nft of nftList"
+        class="col-sm-12"
+      >
+        <h4 class="collection-name"> {{nft['key']}} </h4>
+        <carousel
+          [arrowsOutside]="false"
+          [arrowsTheme]="dark"
+          [cellsToShow]="2"
+          [margin]="40"
+          [cellsToScroll]="2"
+          [counter]="true">
+          <div class="carousel-cell" *ngFor="let item of nft['value']">
+            <app-digi-card-sale
+              class="c-card-container"
+              id="{{ item.id }}"
+              price="{{ item.price }}"
+              [data]="item"
+            ></app-digi-card-sale>
+          </div>
+        </carousel>
+        <hr/>
+      </div>
+    </div>
+
+    <div class="row" *ngIf="nftList != null && nftList.length > 0 && innerWidth < 420">
+      <div
+        *ngFor="let nft of nftList"
+        class="col-sm-12"
+      >
+        <h4 class="collection-name"> {{nft['key']}} </h4>
+        <carousel
+          [arrowsOutside]="false"
+          [arrowsTheme]="dark"
+          [cellsToShow]="1"
+          [counter]="true">
+          <div class="carousel-cell" *ngFor="let item of nft['value']">
+            <app-digi-card-sale
+              class="c-card-container"
+              id="{{ item.id }}"
+              price="{{ item.price }}"
+              [data]="item"
+            ></app-digi-card-sale>
+          </div>
+        </carousel>
+        <hr/>
+      </div>
+    </div>    
+  </div>
+  <div class="row" *ngIf="loading">
+    <div class="col">
+      <div class="mx-auto text-center mt-4 mb-4">
+        <app-loading></app-loading>
+      </div>
+    </div>
+  </div>
+</div>

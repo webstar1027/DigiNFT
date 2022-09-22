@@ -1,0 +1,19 @@
+.right {
+  text-align: right;
+}
+
+.button {
+  font-family: 'Avenir LT Std';
+  font-size: 17px;
+  background-color: #5588e6;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  color: white;
+
+  &.inactive {
+    background-color: #ffffff;
+    color: #1824f0;
+  }
+}
+

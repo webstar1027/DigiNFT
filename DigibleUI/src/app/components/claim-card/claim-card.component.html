@@ -1,0 +1,75 @@
+<div class="container page-top">
+  <div class="row">
+    <div class="col-12 p-t-10 p-b-6">
+      <span class="section-title"
+        ><span class="icon box"></span>Claim Card</span
+      >
+    </div>
+    <div class="solid mt-4 mb-4"></div>
+  </div>
+  <div>
+    <div class="row p-t-40" *ngIf="loading">
+      <div class="col-lg-12">
+        <div class="mx-auto text-center">
+          <app-loading-blockchain></app-loading-blockchain>
+        </div>
+      </div>
+    </div>
+    <div class="row justify-center mt-4" *ngIf="!loading"></div>
+    <div class="row justify-center p-b-20" *ngIf="!loading">
+      <div class="col-xl-3 col-lg-4 col-sm-6">
+        <div class="mx-auto">
+          <app-digi-card [id]="id"></app-digi-card>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="mx-auto">
+          <div class="user">
+            <p>
+              Enter your contact email and physical address for shipment below.
+              The Digible team will contact you from
+              <a href="mailto:admin@digible.io">admin@digible.io</a> to arrange
+              your shipping method. You will be provided a few shipping options
+              depending on your country/location and you can choose which works
+              best for you and provide payment for the shipping label. Tracking
+              will be provided after.              
+            </p>
+            <div class="form-group p-t-10">
+              <input
+                type="email"
+                class="form-control form-control-user"
+                placeholder="Contact email"
+                [(ngModel)]="email"
+              />
+            </div>
+            <div class="form-group p-t-10">
+              <input
+                type="text"
+                class="form-control form-control-user"
+                placeholder="Physical address"
+                [(ngModel)]="address"
+              />
+            </div>
+          </div>
+          <div class="mb-2" *ngIf="claimed">
+            <b disabled="disabled" class="full-width p-t-10">
+              Claim is currently pending - contact admin@digible.io if you dont
+              hear back in 72 hours.
+            </b>
+          </div>
+          <div class="mb-2" *ngIf="!burned && !claimed">
+            <button class="button full-width p-t-10">
+              <span (click)="claim()">1. Claim</span>
+            </button>
+          </div>
+          <div class="mb-2" *ngIf="!burned && claimed">
+            <button class="button full-width p-t-10">
+              <span (click)="burn()">2. Burn</span>
+            </button>
+            <p class="text-danger text-center bold mt-4">WARNING! Only burn the card if you already confirmed the shipment information via email.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

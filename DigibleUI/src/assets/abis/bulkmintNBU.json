@@ -1,0 +1,50 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "wallet",
+        "type": "address"
+      },
+      {
+        "internalType": "string[]",
+        "name": "cardName",
+        "type": "string[]"
+      },
+      {
+        "internalType": "string[]",
+        "name": "cardImage",
+        "type": "string[]"
+      },
+      {
+        "internalType": "bool[]",
+        "name": "cardPhysical",
+        "type": "bool[]"
+      },
+      {
+        "internalType": "string[]",
+        "name": "tokenUriMetadata",
+        "type": "string[]"
+      },
+      {
+        "internalType": "address",
+        "name": "digiNFTContractAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "baseUri",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "qtyToMint",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "bulkMint",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

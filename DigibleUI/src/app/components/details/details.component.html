@@ -1,0 +1,1333 @@
+<div *ngIf="data" class="container page-top p-b-40">
+  <div
+    class="error-alert my-0 py-3 mb-4"
+    role="alert"
+    id="error-alert"
+    *ngIf="showAlertMessage"
+  >
+    <div class="d-flex font-weight-bold text-white mb-0">
+      <p class="mr-2 mb-0">
+        {{ error_message }}
+      </p>
+      <div (click)="closeErrorBanner()">
+        <i class="fa fa-times-circle cursor-pointer"></i>
+      </div>
+    </div>
+  </div>
+  <div class="row p-b-20" *ngIf="!loading">
+    <div class="col-lg-12 col-xs-12 p-b-10">
+      <div class="c-details">
+        <div class="c-details__inner">
+          <button class="c-details__back" (click)="goBack()">
+            <span class="icon arrow"></span>
+          </button>
+          <h1 class="c-details__title">{{ name }}</h1>
+          <span class="icon" *ngIf="verifiedSeller">
+            <div class="icon icon-creator"></div>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row" *ngIf="loading">
+    <div class="col">
+      <div class="mx-auto text-center mt-4 mb-4">
+        <app-loading></app-loading>
+      </div>
+    </div>
+  </div>
+  <div class="row" *ngIf="!loading">
+    <div class="col-md-5 col-xl-4">
+      <app-moralis-card [data]="data"></app-moralis-card>
+
+
+     <div *ngIf = "isDigisafe && physical">
+      <div class="row p-b-20">
+        <div class="col-md-12 col-xs-12">
+          <div class="card min-height shadow mb-4">
+            <div class="card-header py-3">
+             
+              <h5
+                class="mt-2 font-weight-bold text-primary txt-title mb-0 mb-0"
+              >
+                DigiSafe Actions for Phygital   
+              </h5>
+            </div>
+            <div class="card-body">
+             
+              Current Phygital DigiTrack Status: <b> {{phygitalStatus}} </b>  
+            
+            
+              <br>
+              <h6> <b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set New Status: </b>
+               </h6>
+              
+             
+
+                <button
+                class="btn btn-success btn-large"
+                (click)="setPhygitalRedemptionReady()"
+                *ngIf='physical && isDigisafe && phygitalStatus!="Digisafe - Redemption Ready"'
+              >
+                <span>Digisafe - Redemption Ready</span>
+              </button>
+        
+              <button
+              class="btn btn-success btn-large"
+              (click)='setPhygitalStatus("Digisafe - Pending Grade")'
+              *ngIf='physical && isDigisafe && phygitalStatus!="Digisafe - Pending Grade"'
+            >
+              <span>Digisafe - Pending Grade&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            </button>
+
+          
+            <button
+            class="btn btn-warning btn-large"
+            (click)='setPhygitalStatus("Digi Authentication Pending")'
+            *ngIf='physical && isDigisafe && phygitalStatus!="Digi Authentication Pending"'
+          >
+            <span>Digi Authentication Pending&nbsp;</span>
+          </button>
+
+          <button
+          class="btn btn-secondary btn-large text-center"
+          (click)='setPhygitalStatus("Redeemed")'
+          *ngIf='physical && isDigisafe && phygitalStatus!="Redeemed"'
+        >
+          <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Redeemed&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        </button>
+
+        <button
+        class="btn btn-danger btn-large text-center"
+        (click)='setPhygitalStatus("Rejected")'
+        *ngIf='physical && isDigisafe && phygitalStatus!="Rejected"'
+      >
+        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rejected&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+      </button>
+
+
+
+            <br>
+            ** By signing transaction you assert that item is in your custody **
+            <br>
+            <button
+                class="btn btn-info btn-xm"
+                (click)="getPhygitalStatus()"
+                >
+                <span>Refresh Status</span>
+                </button>
+              
+            </div>
+          </div>
+        </div>
+      </div>
+        
+    </div>
+
+
+
+
+      <div class="row p-b-20">
+        <div class="col-md-12 col-xs-12">
+          <div class="card min-height shadow mb-4">
+            <div class="card-header py-3">
+             
+              <h5
+                class="mt-2 font-weight-bold text-primary txt-title mb-0 mb-0"
+              >
+                Owner's Actions
+              </h5>
+            </div>
+            <div class="card-body">
+
+              
+              <div *ngIf = "isAuction && auctionOrSaleData && auctionOrSaleData.available" >Item is currently on auction!</div>
+              <div *ngIf="isYours && !isAuction" class="c-details__buttons">
+               <!--  <button
+                
+                (click)="refreshMetaData()"
+                *ngIf="isYours"
+                > -->
+                <a  class="btn btn-primary" 
+                  href="https://app.scottybeam.io/wallet">
+                  <span>Teleport NFT Across Chains</span>
+                </a>
+                <button
+                  class="btn btn-primary"
+                  (click)="approveMatic()"
+                  *ngIf="showMaticApprove && isInEth && isYours"
+                >
+                  <span>Approve move to Matic</span>
+                </button>
+                <button
+                  class="btn btn-primary"
+                  (click)="sendToMatic()"
+                  *ngIf="!showMaticApprove && isInEth && isYours"
+                >
+                  <span>Move to Matic</span>
+                </button>
+                <!-- <button
+                  class="btn btn-primary"
+                  (click)="sendToEthereum()"
+                  *ngIf="!isInEth && isYours"
+                >
+                  <span>Move to Ethereum</span>
+                </button> -->
+                <button
+                  *ngIf="
+                    isYours &&
+                    !isAuction &&
+                    !price &&
+                    ownerAddress !==
+                      '0x000000000000000000000000000000000000dEaD'
+                  "
+                  [routerLink]="[
+                    '/for-sale/create',
+                    this.data.network,
+                    this.data.tokenAddress,
+                    this.data.id
+                  ]"
+                  class="btn btn-primary ml-auto"
+                >
+                  <span class="btn-title">Sell</span>
+                </button>
+                <button
+                  class="btn btn-primary"
+                  *ngIf="isYours && !isAuction && !price"
+                  [routerLink]="[
+                    '/auctions/create/',
+                    this.data.network,
+                    this.data.id,
+                    this.data.tokenAddress
+                  ]"
+                >
+                  <span>Create Auction</span>
+                </button>
+                <button
+                  class="btn btn-primary"
+                  (click)="enableRoyalty()"
+                  *ngIf="isYours && !hasRoyalty && canSetRoyalty"
+                >
+                  <span>Enable Market Royalty</span>
+                </button>
+               
+               
+
+                <button
+                  data-toggle="modal"
+                  data-target="#burnTokenModal"
+                  class="btn btn-danger"
+                  *ngIf="isYours && !isAuction"
+                >
+                  <span>🔥🔥🔥 Burn NFT 🔥🔥🔥</span>
+                </button>
+
+                <button
+                  *ngIf="isYours && physical && !isAuction"
+                  [routerLink]="['/claim', id]"
+                  class="btn btn-primary"
+                >
+                  <span>Claim Physical Item</span>
+                </button>
+
+                
+
+
+              </div>
+
+
+
+
+              <div *ngIf="!isYours">
+                <p class="mb-0">
+                  You do not own this NFT. Or it is being moved to a different
+                  network.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-7 col-xl-8">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="card min-height shadow mb-4">
+            <div class="card-header py-3">
+              <h5
+                class="mt-2 font-weight-bold text-primary txt-title mb-0 mb-0"
+              >
+                Sale Status
+              </h5>
+            </div>
+            <div class="card-body" *ngIf="!buy && !auction">
+              <div class="row">
+                <div class="col-12">
+                  <p class="bold m-0">
+                    Not for sale right now please check again in future.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="card-body" *ngIf="auctionOrSaleData && !auctionOrSaleData.isAuction && auctionOrSaleData.available">
+              <div class="row">
+                <div
+                  class="col-12"
+                  *ngIf="
+                    ownerAddress ===
+                      '0x000000000000000000000000000000000000dEaD' && physical
+                  "
+                >
+                  <div class="name bold">
+                    <span class="icon fire"></span>
+                    Claimed - {{ burnDate }} (Local)
+                    <span class="icon fire"></span>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="row"
+                *ngIf="
+                  price &&
+                  ownerAddress !== '0x000000000000000000000000000000000000dEaD'
+                "
+              >
+                <div class="col-6 col-lg-4">
+                  <span class="sub-title font-weight-bold">Price:</span>
+                </div>
+                <div class="row p-b-10">
+                 
+                  <div class="col-6 f-s-20"></div>
+                </div>
+                <div class="col-6">
+                  <div class="c-details__price">
+                    <div>
+                      <span
+                        *ngIf="
+                          auctionOrSaleData &&
+                          auctionOrSaleData.paymentCurrency.toLowerCase() ===
+                            digiAddressMatic.toLowerCase()
+                        "
+                        class="icon digi-currency"
+                      ></span>
+                      <span
+                        *ngIf="
+                          auctionOrSaleData &&
+                          auctionOrSaleData.paymentCurrency.toLowerCase() ===
+                            usdcMaticAddress.toLowerCase()
+                        "
+                        class="icon usdc"
+                      ></span>
+                      <span
+                        *ngIf="
+                          auctionOrSaleData &&
+                          auctionOrSaleData.paymentCurrency.toLowerCase() ===
+                            usdtMaticAddress.toLowerCase()
+                        "
+                        class="icon usdt"
+                      ></span>
+                      <span
+                        *ngIf="
+                          auctionOrSaleData.paymentCurrency.toLowerCase() ===
+                          linkMaticAddress.toLowerCase()
+                        "
+                        class="icon chainlink"
+                      ></span>
+                      <span
+                        *ngIf="
+                          auctionOrSaleData &&
+                          auctionOrSaleData.paymentCurrency.toLowerCase() ===
+                            maticCoinAddress.toLowerCase()
+                        "
+                        class="icon polygon"
+                      ></span>
+                    </div>
+                    <span class="ml-2">
+                     {{ price }} {{ paymentCurrencyName }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="row"
+                *ngIf="
+                  ownerAddress !== '0x000000000000000000000000000000000000dEaD'
+                "
+              >
+                <div class="col-6 col-lg-4">
+                  <span class="sub-title font-weight-bold">
+                    End Date (Local):
+                  </span>
+                </div>
+                <div class="col-6 col-lg-6">
+                  <span>{{ endDate * 1000 | date: 'YYYY-MM-dd HH:mm' }}</span>
+                </div>
+              </div>
+              <div
+                class="row"
+                *ngIf="
+                  ownerAddress !== '0x000000000000000000000000000000000000dEaD'
+                "
+              >
+                <div class="col-6 col-lg-4">
+                  <span class="sub-title font-weight-bold">Seller status:</span>
+                </div>
+                <div class="col-6">
+                  <span *ngIf="!verifiedSeller" class="text-danger">
+                    NOT VERIFIED
+                  </span>
+                  <span *ngIf="verifiedSeller" class="text-success">
+                    VERIFIED
+                  </span>
+              
+
+                  
+
+                  
+                </div>
+              </div>
+            </div>
+            <div class="card-body" *ngIf="auction">
+              <div class="row p-b-10">
+                <div
+                  class="col-6 col-md-4 sub-title"
+                  *ngIf="auctionOrSaleData.paymentCurrency"
+                >
+                  Payment Currency:
+                </div>
+                <div class="col-6 f-s-20">
+                  <div class="d-flex align-items-center">
+                    <img [src]="paymentToken.logoURL" class="icon" [title]="paymentToken.displayName" />
+                  </div>
+                </div>
+              </div>
+              <div class="row p-b-10">
+                <div class="col-6 col-md-4 sub-title" *ngIf="winner">
+                  Current bid:
+                </div>
+                <div class="col-6 col-md-4 sub-title" *ngIf="!winner">
+                  Starter bid:
+                </div>
+                <div class="col-6 f-s-20">
+                  <div class="c-details__price" *ngIf="price">
+                    <div class="d-flex align-items-center">
+                      <img [src]="paymentToken.logoURL" class="icon" [title]="paymentToken.displayName" />
+                    </div>
+                    <span class="mx-2">
+                      {{ price }} in {{ paymentCurrencyName }} Tokens
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row p-b-10">
+                <div class="col-6 col-md-4 sub-title">Current Winner:</div>
+                <div class="col-6" *ngIf="!winner">None</div>
+                <div class="col-6" *ngIf="winner">
+                  <a [routerLink]="['/profile', winnerAddress]">
+                    <span
+                      *ngIf="
+                        !winnerIsVerified &&
+                        winner.toLowerCase() !== address.toLowerCase()
+                      "
+                    >
+                      {{ winner | slice: 0:6 }}...{{ winner | slice: 36:64 }}
+                    </span>
+                    <div *ngIf="winnerIsVerified">
+                      {{ winner }}
+                      <span class="icon-creator"></span>
+                    </div>
+                    <span *ngIf="winner === address">
+                      YOU ARE THE HIGHEST BIDDER
+                    </span>
+                  </a>
+                </div>
+              </div>
+              <div class="row p-b-10">
+                <div class="col-6 col-md-4 sub-title">End Date (Local):</div>
+                <div class="col-6">
+                  {{ endDate * 1000 | date: 'HH:mm:ss dd/MM/YYYY' }}
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-12 sub-title font-weight-bold">Last Bids:</div>
+                <div class="col-12" *ngIf="loadingLastBids">
+                  <div class="mx-auto text-center">
+                    <app-loading></app-loading>
+                  </div>
+                </div>
+                <div class="col-12" *ngFor="let bid of lastBids">
+                  <div class="row" *ngIf="lastBids.length > 0">
+                    <div class="col-md-4">
+                      <div class="c-details__price">
+                        <span class="mr-2">{{ bid.offer }}</span>
+                      </div>
+                    </div>
+                    <div class="col-lg-4">
+                      <a [routerLink]="['/profile', bid.buyer]">
+                        {{ bid.buyer | slice: 0:4 }}...{{
+                          bid.buyer | slice: 38:64
+                        }}
+                      </a>
+                    </div>
+                    <div class="col-lg-4">
+                      {{ bid.created | date: 'HH:mm dd/MM' }}
+                    </div>
+                  </div>
+                  <div class="row" *ngIf="!lastBids">
+                    <div class="col-lg-4">
+                      <p>There have been no bids yet.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-header py-3">
+              <h5 class="mt-2 font-weight-bold text-primary txt-title mb-0">
+                Sale Actions
+              </h5>
+            </div>
+            <div class="card-body" *ngIf="auction">
+             
+              <div div class="row"
+              *ngIf="offersMadeToMe.length > 0 && isYours && !isAuction
+              && loadDigiTrade">
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  (click)="viewMyOffers()"
+                 
+                >
+                  View Offers To Me{{offersMadeToMe.length}}
+                </button>
+              </div>
+
+              <div div class="row"
+              *ngIf="offersIMade.length > 0 && !isYours && !isAuction
+              && loadDigiTrade">
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  (click)="viewMyOffers()"
+                 
+                >
+                  View Offers I Made ({{offersIMade.length}})
+                </button>
+              </div>
+             
+              <div class="row"
+                *ngIf="
+                !isYours &&
+                ownerAddress !== '0x000000000000000000000000000000000000dEaD' &&
+                loadDigiTrade
+      
+              ">
+                <button 
+                  class="btn btn-primary"
+                  data-toggle="modal"
+                  data-target="#offerModal"
+                >
+                  <span>MAKE OFFER</span>
+                </button>              
+              </div>
+           
+            
+         
+              <div
+                class="row"
+                *ngIf="
+                  ownerAddress === '0x000000000000000000000000000000000000dEaD'
+                "
+              >
+                <div class="col-md-6 p-t-5">
+                  <p>None, card claimed.</p>
+                </div>
+              </div>
+              <div
+                class="row"
+                *ngIf="
+                  !isYours &&
+                  ownerAddress !== '0x000000000000000000000000000000000000dEaD'
+                "
+              >
+                <div *ngIf="bidApprovedQty > 0" class="col-md-6 p-t-5">
+                  <form class="user">
+                    <div class="form-group">
+                      <input
+                        type="number"
+                        step="0.01"
+                        class="form-control form-control-user"
+                        [placeholder]="'$0.00'"
+                        (blur)="onBlur($event)"
+                        [(ngModel)]="inputAmount"
+                        (ngModelChange)="onChangeInput()"
+                        name="input"
+                      />
+                    </div>
+                  </form>
+                </div>
+                <div
+                  *ngIf="!isApprovedForBid && isAuction"
+                  class="col-md-6 p-t-5"
+                >
+                  <div class="btn btn-primary full-width">
+                    <span (click)="approveBid()">
+                      1. APPROVE {{ paymentCurrencyName }} FOR BID
+                    </span>
+                  </div>
+                </div>
+              </div>
+              
+
+              <div class="row center">
+                <div class="col-md-6 p-t-5">
+                  <button
+                    *ngIf="isApprovedForBid"
+                    class="btn btn-primary full-width"
+                    [attr.disabled]="
+                      this.lowBid || bidApprovedQty == 0 ? '' : null
+                    "
+                    (click)="bid()"
+                  >
+                    <span *ngIf="isApprovedForBid">
+                      BID NOW {{ paymentCurrencyName }}
+                    </span>
+                  </button>
+                  <div
+                    *ngIf="!showAllow && !this.lowBid"
+                    class="p-t-5 warn-bid"
+                  >
+                    <i>
+                      IMPORTANT: ONLY BID IF YOU ARE WILLING TO ACCEPT THE GAS
+                      FEES
+                    </i>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="row p-t-20"
+                *ngIf="
+                  bidApprovedQty < priceBuyNowDecimals &&
+                  priceBuyNowDecimals > 0 &&
+                  !isYours
+                "
+              >
+                <div class="col-md-6 p-t-5">
+                  <button
+                    (click)="approve()"
+                    class="btn btn-primary full-width"
+                  >
+                    <span>{{ '1. APPROVE BUY FOR ' + priceBuyNow }}</span>
+                  </button>
+                </div>
+              </div>
+              <div
+                class="row"
+                *ngIf="priceBuyNowDecimals > 0 && bidApprovedQty && !isYours"
+              >
+                <div class="col-md-6 p-t-5">
+                  <button
+                    [disabled]="bidApprovedQty < priceBuyNowDecimals"
+                    class="btn btn-primary full-width"
+                    (click)="directBuy()"
+                  >
+                    <span *ngIf="bidApprovedQty < priceBuyNowDecimals">
+                      2. BUY FOR {{ priceBuyNow }} {{ paymentCurrencyName }}
+                    </span>
+                    <span *ngIf="bidApprovedQty >= priceBuyNowDecimals">
+                      BUY FOR {{ priceBuyNow }} {{ paymentCurrencyName }}
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="card-body" *ngIf="buy">
+              <div
+                class="row"
+                *ngIf="
+                  ownerAddress === '0x000000000000000000000000000000000000dEaD'
+                "
+              >
+                <div class="col-md-6 p-t-5">
+                  <p class="m-0">None, Card claimed.</p>
+                </div>
+              </div>
+
+              <div class="row">
+              
+               
+                <div *ngIf="!isApprovedForBuy && address && !isYours" class="col-md-6">
+                  <div class="btn btn-primary full-width">
+                    <span (click)="approveBuy()">
+                      1. APPROVE FOR BUY {{paymentCurrencyName }}</span>
+                  </div>
+                </div>
+                <div
+                  class="col-md-6 pt-5 d-flex gap-2 mr-1"
+                  *ngIf="
+                    isApprovedForBuy &&
+                    allowedMarket &&
+                    !isYours &&
+                    ownerAddress !==
+                      '0x000000000000000000000000000000000000dEaD'
+                  "
+                >
+                  <button
+                    [disabled]="allowedMarket < priceDecimals && address"
+                    class="btn btn-primary full-width"
+                    (click)="buyFromMarket()"
+                  >
+                    <span *ngIf="allowedMarket < priceDecimals">
+                      2. BUY NOW
+                    </span>
+                    <span *ngIf="allowedMarket >= priceDecimals">BUY NOW</span>
+                  </button>
+                  <button 
+                    class="btn btn-primary full-width"
+                    data-toggle="modal"
+                    data-target="#offerModal"
+                  >
+                    <span *ngIf="!isAuction && loadDigiTrade" >MAKE OFFER</span>
+                  </button>
+                </div>
+                <div class="col-md-6" *ngIf="isYours">
+                  <button
+                    (click)="cancelMarket()"
+                    class="btn btn-primary full-width"
+                  >
+                    <span>CANCEL SALE</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="row px-4 mb-4" *ngIf="isYours && !winner && isAuction && auctionOrSaleData.available">
+              <div class="col-md-6 p-t-5">
+                <button
+                  (click)="cancelAuction()"
+                  class="btn btn-primary full-width"
+                >
+                  <span>CANCEL AUCTION</span>
+                </button>
+              </div>
+            </div>
+            <div class="row" *ngIf="isYours && canClaimBackFromAuction">
+              <div class="col-md-6 p-t-5">
+                <button
+                  (click)="cancelAuction()"
+                  class="btn btn-primary full-width"
+                >
+                  <span>CLAIM BACK CARD</span>
+                </button>
+              </div>
+            </div>
+            <div class="row" *ngIf="winner && isYours">
+              <div class="col-md-6 p-t-5">
+                <span>CANNOT CANCEL AUCTION</span>
+              </div>
+            </div>
+
+          </div>          
+        </div>
+        <div class="col-lg-12">
+          <div class="card min-height shadow mb-4">
+            <div class="card-header py-3">
+              <h5 class="mt-2 font-weight-bold text-primary txt-title mb-0">
+                Chain Info
+              </h5>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-6 col-md-4">
+                  <span class="sub-title font-weight-bold">Address:</span>
+                </div>
+                <div class="col-6">
+                  <a [href]="explorerPrefix + contractAddress" target="blank">
+                    {{ contractAddress | slice: 0:6 }}...{{
+                      contractAddress | slice: 36:64
+                    }}
+                  </a>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-6 col-md-4">
+                  <span class="sub-title font-weight-bold">Token ID:</span>
+                </div>
+                <div class="col-6">{{ data.id }}</div>
+              </div>
+              <div class="row">
+                <div class="col-6 col-md-4">
+                  <span class="sub-title font-weight-bold">Blockchain:</span>
+                </div>
+                <div class="col-6">{{ data.network }}</div>
+              </div>
+            </div>
+            <div class="card-header py-3">
+              <h5 class="mt-2 font-weight-bold text-primary txt-title mb-0">
+                Token Info
+              </h5>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-6 col-md-4">
+                  <span class="sub-title font-weight-bold">Name:</span>
+                </div>
+                <div class="col-6">{{ name }}</div>
+              </div>
+              <div class="row">
+                <div class="col-6 col-md-4">
+                  <span class="sub-title font-weight-bold">
+                    Physically backed:
+                  </span>
+                </div>
+                <div
+                  *ngIf="physical"
+                  class="col-6"
+                  data-tooltip="This NFT is the legal title to the physical underlying card displayed in the Image. It can be redeemed from the DIGISAFE™ for the physical card through digible.io and NFT would be burned. "
+                >
+                  Yes
+                </div>
+                <div
+                  *ngIf="!physical"
+                  class="col-6"
+                  data-tooltip="This NFT is NOT the legal title to a physical underlying collectible."
+                >
+                  No
+                </div>
+              </div>
+
+              <div *ngIf="physical" class="row">
+                <div class="col-6 col-md-4">
+                  <span class="sub-title font-weight-bold">Phyigtal DigiTrack Status:</span>
+                </div>
+
+                <div *ngIf='phygitalStatus=="Digisafe - Redemption Ready"'
+                  class="col-6 text-success"
+                  data-tooltip = "Item is authenticated and in an authorized digisafe and ready to be redeemed. Upon request, the DigiSafe will send the card to you and the NFT will be burned. The option to redeem is available on the owner's actions part of your NFT page. As a seller, you may claim your sale revenue immediatelly."
+
+                  >
+                  {{ phygitalStatus }}
+
+                </div>
+
+                <div *ngIf='phygitalStatus=="Digisafe - Pending Grade"'
+                  class="col-6 text-success"
+                  data-tooltip = "Item is authenticated and has been sent to a grading service, such as PSA, Beckett, CGC, etc. While the grade is pending, the NFT can be freely traded but only available for physical redemption once it comes back from the grading company. As a seller, you may claim your sale revenue immediatelly."
+
+                  >
+                  {{ phygitalStatus }}
+
+                </div>
+
+                <div *ngIf='phygitalStatus=="Digi Authentication Pending"'
+                class="col-6 text-warning"
+                data-tooltip = "Item has not yet been received by the DigiSafe or it is not authenticated yet. If the Digisafe does not receive the item or it deems it inauthentic, the transaction is reverted and the buyer receives a full refund. As a seller, you may only claim the sales revenue once the DigiSafe receives, authenticates, and updates the status."
+
+                >
+                {{ phygitalStatus }}
+
+              </div>
+
+              <div *ngIf='phygitalStatus=="Rejected"'
+              class="col-6 text-danger"
+              data-tooltip = "Item has been rejected by the DigiSafe. Buyer will be refunded. Seller cannot claim revenue, and may be subject to sanctions."
+
+              >
+              {{ phygitalStatus }}
+
+            </div>
+
+            <div *ngIf='phygitalStatus=="Redeemed"'
+              class="col-6 text-info"
+              data-tooltip = "Item has been redeemed and the NFT has been burned. It may not be traded anymore. A new NFT will be issued should this card enter the Digible ecosystem again."
+
+              >
+              {{ phygitalStatus }}
+
+            </div>
+
+                
+              </div>
+
+              <div
+                class="row mt-2 p-t-15"
+                *ngIf="
+                  ownerAddress ==
+                    '0x000000000000000000000000000000000000dEaD' && physical
+                "
+              >
+                <div class="col-lg-12">
+                  This token has been claimed. The digital version was burned on
+                  the following date:
+                  <b>{{ burnDate }}</b>
+                  (Local)
+                </div>
+              </div>
+              <div
+                class="row"
+                *ngIf="
+                  ownerAddress !=
+                    '0x000000000000000000000000000000000000dEaD' || !physical
+                "
+              >
+                <div class="col-6 col-md-4">
+                  <span class="sub-title font-weight-bold">Owner:</span>
+                </div>
+                <div class="col-6" *ngIf="!verifiedSeller">
+                  <a [routerLink]="['/profile', ownerAddress]">
+                    {{ ownerAddress | slice: 0:6 }}...{{
+                      ownerAddress | slice: 36:64
+                    }}
+                  </a>
+                </div>
+                <div class="col-6" *ngIf="verifiedSeller">
+                  <a
+                    class="owner-name"
+                    [routerLink]="['/profile', ownerAddress]"
+                  >
+                    {{ verifiedSeller }}
+                    <div class="icon-creator"></div>
+                  </a>
+                </div>
+              </div>
+              <div class="row p-t-15" *ngIf="hasRoyalty">
+                <div class="col-lg-12"><h5 class="bold">Royalty fees</h5></div>
+                <div class="col-lg-12">
+                  <span class="bold">Buyer note:</span>
+                  this item has a 
+                  <span class="bold">{{ royaltyFee }}% creator royalty</span>
+                  fee, please note when reselling this item that this fee will
+                  be applied in addition to the platform's standard fee
+                </div>
+              </div>
+            
+            </div>
+            <div class="card-header py-3">
+              <h5 class="mt-2 font-weight-bold text-primary txt-title mb-0">
+                <span>NFT Attributes</span>
+                <!-- <span class="font-weight-normal">(Edit for free)</span> -->
+              </h5>
+            <!--   <button
+                id="editDescriptionModal"
+                data-toggle="modal"
+                data-target="#addDescriptionModal"
+                class="btn btn-primary ml-auto"
+                *ngIf="isAdmin"
+                #editDescriptionModal
+              >
+                <span>Edit</span>
+              </button> -->
+            </div>
+            <div class="card-body pb-0">
+              <div class="row">
+                <div class="col-md-12 col-xs-12">
+                  <ul class="traits row">
+                    <li
+                      class="list-unstyled col-md-4"
+                      *ngFor="let attribute of attributes"
+                    >
+                      <div class="trait">
+                        <span class="font-weight-bold text-uppercase">
+                          {{ attribute.trait_type }}
+                        </span>
+                        <span>{{ attribute.value }}</span>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <!-- <ng-container
+                *ngFor="
+                  let desc_item of description | keyvalue: keepOriginalOrder
+                "
+              >
+                <ul
+                  class="c-details__list"
+                  *ngIf="desc_item.key !== 'backCardImage'"
+                >
+                  <li class="row">
+                    <span class="bold text-capitalize col-4">
+                      {{ desc_item.key }}:
+                    </span>
+                    <span class="col-6">{{ desc_item.value || "..." }}</span>
+                  </li>
+                </ul>
+              </ng-container> -->
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-12 p-b-40">
+          <div class="card shadow mb-4">
+            <div class="card-header py-3">
+              <h5 class="mt-2 font-weight-bold text-primary txt-title mb-0">
+                Last Sales
+              </h5>
+            </div>
+            <div class="card-body">
+              <div>
+                <div class="row" *ngIf="loadingLastSells">
+                  <div class="col-lg-12">
+                    <div class="mx-auto text-center">
+                      <app-loading></app-loading>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mb-4" *ngIf="!loadingLastSells">
+                  <div class="col-lg-3 col-sm-4 col-xs-4">
+                    <span class="bold">Event</span>
+                  </div>
+                  <div class="col-lg-3 col-sm-4 col-xs-4">
+                    <span class="bold">Price</span>
+                  </div>
+                  <div class="col-lg-3 col-sm-4 col-xs-4">
+                    <span class="bold">Date</span>
+                  </div>
+                  <div class="col-lg-3 col-sm-4 col-xs-4">
+                    <span class="bold">Buyer</span>
+                  </div>
+                </div>
+                <div class="row mb-2 mt-2" *ngFor="let sell of lastSells">
+                  <div class="col-lg-3 col-sm-4 col-xs-4 sub-title">
+                    <div class="c-details__price">
+                      <span
+                        *ngIf="
+                          sell.from_address ===
+                          '0x0000000000000000000000000000000000000000'
+                        "
+                        class="mr-2"
+                      >
+                        MINTED
+                      </span>
+                      <span
+                        *ngIf="
+                          sell.to_address ===
+                          '0xea3d4124dd3559530f88e83777e4a0c31de318fe'
+                        "
+                        class="mr-2"
+                      >
+                        LISTED FOR AUCTION
+                      </span>
+                      <span
+                        *ngIf="
+                          sell.to_address ===
+                          '0x2050ebd262db421de662607a05be26930edbb8c8'
+                        "
+                        class="mr-2"
+                      >
+                        LISTED FOR SALE
+                      </span>
+                      <span
+                        *ngIf="
+                          sell.from_address !== sell.to_address &&
+                          sell.to_address !==
+                            '0xea3d4124dd3559530f88e83777e4a0c31de318fe' &&
+                          sell.from_address !==
+                            '0x0000000000000000000000000000000000000000'
+                        "
+                        class="mr-2"
+                      >
+                        SOLD
+                      </span>
+                      <!--  <span *ngIf="symbol === 'USDT'" class="icon usdt"></span> -->
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-sm-4 col-xs-4 sub-title">
+                    <span class="mr-2">{{ sell.price }}</span>
+                  </div>
+                  <div class="col-lg-3 col-sm-4 col-xs-4 sub-title">
+                    {{ sell.block_timestamp | date: 'HH:mm | dd/MM/YYYY' }}
+                  </div>
+                  <div
+                    class="col-lg-3 col-sm-4 col-xs-4"
+                    *ngIf="sell.to_address"
+                  >
+                    <div class="d-flex">
+                      <a
+                        class="owner-name"
+                        [routerLink]="['/profile', sell.to_address]"
+                      >
+                        {{ this.truncate(sell.to_address, 15, '...') }}
+                      </a>
+                      <div class="icon-creator"></div>
+                    </div>
+                  </div>
+                  <div
+                    class="col-lg-3 col-sm-4 col-xs-4"
+                    *ngIf="!sell.to_address"
+                  >
+                    <a [routerLink]="['/profile', sell.wallet]">
+                      {{ sell.wallet | slice: 0:4 }}...{{
+                        sell.wallet | slice: 39:64
+                      }}
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade"
+  id="offerModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="offerModalLabel"
+  aria-hidden="true"
+  #offerModal>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="MakeOfferModalLabel">Make an Offer</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="container">
+          <div class="row center">
+            <div class="col-lg-12 left p-t-15 p-b-10 ">
+              <span>Fee to Make Offer {{digiTradeMakeOffferFee / 1000000000000000000}} DIGI </span>
+              <button
+              class="btn btn-primary"
+              (click)="approveDigiForDigiTrade()"
+              *ngIf="!approvedDigiTradeToSpendDIGIforFees"
+            >
+              <span>Approve Digi</span>
+            </button>
+            </div>
+            <div class="col-lg-12 center p-t-15 p-b-10">
+              <div class="c-card__input-container">
+                <div class="d-flex">
+                  
+                  <label class="c-card__label">Input Offer Amount</label>
+                  <span class="c-card__balance">Balance: {{ paymentCurrencyBalanceDigiTrade / 1000000000000000000}}</span>
+                </div>
+                <div class="d-flex">
+                  <input
+                    type="number"
+                    name="input"
+                    [(ngModel)]="amountInput"
+                    (keyup)="calculate($event)"
+                    placeholder="0"
+                    class="c-card__input"
+                  />
+                  <div class="c-card__currency">
+                  <!-- <span class="icon logo-inverse"></span> -->
+                    <!-- <span class="c-card__currency-name"> -->
+                    
+
+                    <!-- </span>  -->
+                  </div>
+                </div>
+            </div>
+          </div>
+          <label>Currency:</label>
+          <ng-select
+            placeholder="Select Payment Currency"
+            [items]="currencyDropDown"
+            bindLabel="name"
+            bindValue="id"
+            (change)="currencyHandlerDigiTrade()"
+            [(ngModel)]="paymentCurrencyDigiTrade"
+          ></ng-select>
+          <div class="col-lg-12 p-t-15">
+            <button
+              class="btn btn-primary"
+              (click)="approveTradeCurrencyForDigiTrade()"
+              *ngIf="!approvedDigiTradeSpendCurrency && paymentCurrencyNameDigiTrade"
+            >
+              <span>Approve {{paymentCurrencyNameDigiTrade}}</span>
+            </button>
+
+
+            <div class="col-lg-12">
+              <button
+                type="button"
+                class="btn btn-primary"
+                (click)="makeOffer()"
+                *ngIf="approvedDigiTradeSpendCurrency && approvedDigiTradeToSpendDIGIforFees"
+              >
+                Make Offer
+              </button>
+            </div>
+
+        
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  class="modal fade"
+  id="burnTokenModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="burnTokenModalLabel"
+  aria-hidden="true"
+  #burnTokenModal
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="burnTokenModalLabel">Destroy this NFT</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="container">
+          <div class="row center">
+            <div class="col-lg-12 center p-t-15 p-b-10">
+              <span>Are you sure you want to destroy this NFT?</span>
+            </div>
+            <div class="col-lg-12 center p-t-15 p-b-10">
+              <b>- {{ name }}</b>
+            </div>
+            <div class="col-lg-12 p-t-15">
+              <div class="col-lg-12">
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  (click)="burnNFT(this.id)"
+                >
+                  Destroy this NFT Token
+                </button>
+              </div>
+            </div>
+            <div class="col-lg-12 center p-t-15 p-b-10">
+              <span>
+                This action cannot be reversed, once the delete button is
+                pressed, this token will be sent to the address 0x0, which is
+                inaccessible and can never be recovered.
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  class="modal fade"
+  id="addDescriptionModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="addDescription"
+  aria-hidden="true"
+  #addTokenModal
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="searchModalLabel">
+          Add information about this card
+        </h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-lg-12 p-t-15">
+            <form class="user">
+              <div class="form-group">
+                <label for="" class="ml-2">Publisher</label>
+                <input
+                  type="text"
+                  class="form-control form-control-user mb-2"
+                  placeholder="Publisher..."
+                  [(ngModel)]="inputPublisher"
+                  (ngModelChange)="inputPublisher = $event.toUpperCase()"
+                  name="publisher"
+                  maxlength="13"
+                />
+                <label for="" class="ml-2">Edition</label>
+                <input
+                  type="text"
+                  class="form-control form-control-user mb-2"
+                  placeholder="Edition..."
+                  [(ngModel)]="inputEdition"
+                  (ngModelChange)="inputEdition = $event"
+                  name="edition"
+                  maxlength="18"
+                />
+                <label for="" class="ml-2">Year</label>
+                <input
+                  type="text"
+                  class="form-control form-control-user mb-2"
+                  placeholder="Year..."
+                  [(ngModel)]="inputYear"
+                  (ngModelChange)="inputYear = $event.toLowerCase()"
+                  name="year"
+                  maxlength="9"
+                />
+                <label for="" class="ml-2">Graded</label>
+                <input
+                  type="text"
+                  class="form-control form-control-user mb-2"
+                  placeholder="Graded..."
+                  [(ngModel)]="inputGraded"
+                  (ngModelChange)="inputGraded = $event"
+                  name="graded"
+                  maxlength="13"
+                />
+                <label for="" class="ml-2">Population</label>
+                <input
+                  type="text"
+                  class="form-control form-control-user mb-2"
+                  placeholder="Population..."
+                  [(ngModel)]="inputPopulation"
+                  (ngModelChange)="inputPopulation = $event.toLowerCase()"
+                  name="population"
+                  maxlength="13"
+                />
+                <label for="" class="ml-2">Description</label>
+                <input
+                  type="text"
+                  class="form-control form-control-user mb-2"
+                  placeholder="Description..."
+                  [(ngModel)]="inputDescription"
+                  name="description"
+                />
+              </div>
+            </form>
+          </div>
+        </div>
+      <!--   <div class="row p-t-15 p-b-10 center justify-center">
+          <div class="col-lg-12">
+            <button
+              type="button"
+              class="btn btn-primary"
+              (click)="addDescription()"
+            >
+              {{ descriptionLoading ? '. . .' : 'Add Description' }}
+            </button>
+          </div>
+        </div> -->
+      </div>
+    </div>
+  </div>
+</div>

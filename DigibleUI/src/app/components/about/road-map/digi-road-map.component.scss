@@ -1,0 +1,170 @@
+//-Timeline Specific Mixins
+
+//- Indicator style
+@mixin timeline-indicator {
+  content: "";
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  position: absolute;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+}
+
+// - Timeline entry
+// - Produces the following:
+/* - &:nth-child(1) {
+			 grid-area: entry1;
+		 }
+   - useful timesaver if there is a lengthy list
+*/
+@mixin timeline-entry {
+  @for $i from 1 through 5 {
+    &:nth-child(#{$i}) {
+      grid-area: entry#{$i};
+    }
+  }
+}  
+
+//- Variables
+$timeline-indicator-color: white;
+$timeline-indicator-border: 1px solid #5588e6;
+$timeline-title-background-color: #5588e6;
+$panel-background-color: lighten(#5588e6, 10%);
+$seagull: #213458;
+
+// - Mobile First Timeline - stacked for small viewports and browsers that don't support grid
+
+.timeline {
+  line-height: 1.5em;
+  font-size: 14px;
+  transition: all 0.4s ease;
+  position: relative;
+  counter-reset: section;
+
+  //- indicator line
+  &:before {
+    content: "";
+    width: 10px;
+    height: 100%;
+    background: $timeline-indicator-color;
+    position: absolute;
+    top: 0;
+    left: -3.313em;
+    border-radius: 40px 40px;
+  }
+}
+
+.timeline--entry {
+  position: relative;
+  width: 320px;
+  margin-bottom: 2rem;
+
+  &:nth-child(2n) {
+    @media only screen and (min-width: 1024px) {
+      margin-left: auto;
+    }
+  } 
+
+  // background-color: $panel-background-color;
+
+  &__title {
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    padding: 1.5rem;
+    line-height: 0;
+    color: white;
+    font-weight: bold;
+    background-color: $timeline-title-background-color;
+    font-size: 1rem;
+
+    &:before {
+      @include timeline-indicator;
+      left: -1em;
+      border-right: 10px solid #5588e6;
+    }
+  }
+
+  &__detail {
+    color: white;
+    font-size: 17px;
+    line-height: 1.5;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    background-color: $panel-background-color;
+    padding: 1em;
+    margin: 0;
+  }
+
+  //- number indicator
+  &:before {
+    content: "";
+    color: white;
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    line-height: 0;
+    justify-content: center;
+    width: 3em;
+    height: 3em;
+    background-color: $seagull;
+    border: 0.2em solid white;
+    border-radius: 50%;
+    position: absolute;
+    counter-increment: section;
+    content: counter(section);
+    text-shadow: 0 1px 0 darkgrey;
+    left: -4.5em;
+    border: 1px solid #5588e6;
+  }
+}
+
+//- Tablet Up Screens Layout if CSS Grid is supported
+@supports (display: grid) {
+  @media only screen and (min-width: 1024px) {
+    .timeline {
+      display: grid;
+      grid-gap: 4.75em;
+      grid-template-areas:
+        ".  entry1"
+        "entry2  ."
+        ". entry3"
+        "entry4 ."
+        ". entry5";
+      //- Timeline line
+      &:before {
+        left: 49.5%;
+      }
+    }
+
+    .timeline--entry {
+      @include timeline-entry;
+
+      //- odd timeline entry
+      &:nth-of-type(odd) {
+        //- Default position the number indicator mobile
+        &:before {
+          left: -4em;
+        }
+      }
+
+      //- even timeline entry
+      &:nth-of-type(even) {
+        &:not(:nth-of-type(odd)) {
+          //-right pointing arrow indicator
+          .timeline--entry__title {
+            &:before {
+              left: 100%;
+              border-left: 10px solid #5588e6;
+              border-right: 0;
+            }
+          }
+        }
+        //- Position the number indicator
+        &:before {
+          left: 103%;
+        }
+      }
+    }
+  }
+}

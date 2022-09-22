@@ -1,0 +1,188 @@
+<div *ngIf="introDiv" [@enterAnimation] class="c-card">
+  <div class="c-card__apy"><span>Min 8% APY</span></div>
+  <div class="c-card__body" *ngIf="loading">
+    <p class="bold mt-2">Loading...</p>
+  </div>
+  <div class="c-card__body" *ngIf="!loading">
+    <h3 class="c-card__title">{{ stake.name }} Stake</h3>
+    <p class="c-card__paragraph">
+      Welcome to DIGI staking.
+    </p>
+    <div class="d-flex">
+      <div><span class="icon star mr-2"></span></div>
+      <p class="c-card__paragraph">
+        Stake your $DIGI at fixed APY 8%(minimum) on Matic Network.
+      </p>
+    </div>
+    <div class="d-flex">
+      <div><span class="icon star mr-2"></span></div>
+      <p class="c-card__paragraph">
+        Updates to Staking with varying Apy are coming soon.
+      </p>
+    </div>
+    <div class="d-flex">
+      <div><span class="icon star mr-2"></span></div>
+      <p class="c-card__paragraph">
+        There are no lockups for you DIGI, feel free to withdraw anytime.
+      </p>
+    </div>
+    <button
+      (click)="setDivToDisplay('Withdraw')"
+      class="c-card__btn c-card__btn-primary btn mb-4"
+    >
+      View Balance
+    </button>
+    <button
+      (click)="setDivToDisplay('Start Staking')"
+      class="c-card__btn c-card__btn-secondary btn"
+    >
+      Start Staking
+    </button>
+  </div>
+</div>
+<div *ngIf="stakeDiv" [@enterAnimation] class="c-card">
+  <div *ngIf="errorMessage" class="c-card__errors">
+    {{ errorMessage }}
+    <span (click)="errorMessage = false" class="c-card__errors-close">X</span>
+  </div>
+  <button
+    (click)="setDivToDisplay('Intro')"
+    class="icon arrow c-card__arrow"
+  ></button>
+  <div class="c-card__apy"><span>Min 8% APY</span></div>
+  <div class="c-card__body" *ngIf="loading">
+    <p class="bold mt-2">Loading...</p>
+  </div>
+  <div class="c-card__body" *ngIf="!loading">
+    <h3 class="c-card__title">{{ stake.name }} Stake</h3>
+    <h4 class="c-card__title">Total DIGI staked: {{ totalStaked }}</h4>
+    <div class="c-card__input-container">
+      <div class="d-flex">
+        <label class="c-card__label">Input</label>
+        <span class="c-card__balance">Balance: {{ balance }}</span>
+      </div>
+      <div class="d-flex">
+        <input
+          type="number"
+          name="input"
+          [(ngModel)]="amountInput"
+          (keyup)="calculateApr($event)"
+          placeholder="0"
+          class="c-card__input"
+        />
+        <div class="c-card__currency">
+          <span class="icon logo-inverse"></span>
+          <span class="c-card__currency-name">DIGI</span>
+        </div>
+      </div>
+    </div>
+    <div class="c-card__return-text">
+      <p>Your minimum return per year at 8%:</p>
+      <div class="ml-auto">
+        <div
+          class="c-card__currency u-border-bottom"
+          style="padding-bottom: 0.5rem"
+        >
+          <span class="c-card__return">{{ calculatedApr }}</span>
+          <span class="icon logo-inverse"></span>
+          <span class="c-card__currency-name">DIGI</span>
+        </div>
+      </div>
+    </div>
+    <div class="d-flex flex-column mt-4">
+      <div class="d-flex">
+        <span class="c-card__info-icon icon info-icon"></span>
+        <p class="text-small">
+          You can stake for as long or a short as you wish.
+        </p>
+      </div>
+      <p class="c-card__paragraph u-weight--bold">
+        MIN APY YIELD 8%. DIGI treasury allocates returns of minimum yield.
+        Until the transactional revenue reaches higher levels with usage, the
+        minimum yield is paid from the DIGI treasury (Rewards & Pools
+        allocation).
+      </p>
+    </div>
+
+    <div *ngIf="!address">
+      <button
+        data-bs-toggle="modal"
+        data-bs-target="#walletModal"
+        class="c-card__btn c-card__btn-secondary btn"
+      >
+        Connect
+      </button>
+    </div>
+    <div *ngIf="!approved && address">
+      <button
+        (click)="approveDigi()"
+        class="c-card__btn c-card__btn-secondary btn"
+      >
+        Approve {{ stake.name }}
+      </button>
+    </div>
+    <div *ngIf="approved">
+      <button (click)="deposit()" class="c-card__btn c-card__btn-secondary btn">
+        Deposit
+      </button>
+    </div>
+  </div>
+</div>
+<div *ngIf="withdrawDiv" [@enterAnimation] class="c-card">
+  <div *ngIf="errorMessage" class="c-card__errors">
+    {{ errorMessage }}
+    <span (click)="errorMessage = false" class="c-card__errors-close">X</span>
+  </div>
+  <button
+    (click)="setDivToDisplay('Intro')"
+    class="icon arrow c-card__arrow"
+  ></button>
+  <div class="c-card__apy"><span>Min 8% APY</span></div>
+  <div class="c-card__body" *ngIf="loading">
+    <p class="bold mt-2">Loading...</p>
+  </div>
+  <div class="c-card__body" *ngIf="!loading">
+    <h3 class="c-card__title">Balance</h3>
+    <p>
+      The information shown below is a calculation of your current available
+      rewards from staking
+    </p>
+    <div class="c-card__staked">
+      <div class="c-card__balance">
+        <span class="mr-2 c-card__stake c-card__balance-item">{{ yourStake }}</span>
+        <div class="c-card__currency c-card__balance-item">
+          <span class="icon logo-inverse"></span>
+          <span class="c-card__currency-name">DIGI</span>
+        </div>
+        <span class="c-card__balance-item flex-end">You have staked</span>
+      </div>
+    </div>
+    <div class="c-card__staked">
+      <div class="c-card__balance">
+        <span class="mr-2 c-card__stake c-card__balance-item">{{ rewards }}</span>
+        <div class="c-card__currency c-card__balance-item">
+          <span class="icon logo-inverse"></span>
+          <span class="c-card__currency-name">DIGI</span>
+        </div>
+        <span class="c-card__balance-item flex-end">$DIGI Earned</span>
+      </div>
+    </div>
+    <div *ngIf="approved && rewardsNumber > 0">
+      <button
+        class="c-card__btn c-card__btn-secondary btn mt-4"
+        (click)="claim()"
+      >
+      Claim
+      </button>
+    </div>
+
+    <div *ngIf="address && yourStake > 0.0">
+      <button
+        class="c-card__btn c-card__btn-secondary btn mt-4"
+        (click)="withdraw()"
+      >
+        Withdraw
+      </button>
+    </div>
+  </div>
+</div>

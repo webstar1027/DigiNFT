@@ -1,0 +1,92 @@
+<div class="container page-top">
+  <div class="row c-page-title">
+    <div class="col-12 p-t-10 p-b-6">
+      <div class="section-title">
+        <span class="icon user"></span>
+        <span>Welcome to #Heroes of Ukraine</span>
+      </div>
+    </div>
+    <div class="solid mt-4 mb-4"></div>
+  </div>
+
+  <div class="row justify-center p-b-20">
+    <div class="col-xl-6 col-lg-6 col-md-10 col-sm-12">
+      <span class="c-about__description">
+        Welcome to #Heroes of Ukraine
+      </span>
+      <h5>The following NFTs are available for minting. <br>
+      All future sales royalties are set to the Ukrainian Donation Wallet</h5>
+
+    </div>
+  </div>
+
+
+<div class="row" *ngIf="loading">
+    <div class="col">
+      <div class="mx-auto text-center mt-4 mb-4">
+        <app-loading></app-loading>
+      </div>
+    </div>
+  </div>
+
+
+<div class="row" *ngIf="nfts != null && nfts.length > 0 && !loading">
+  <div
+    *ngFor="let nft of nfts"
+   
+  >
+
+     
+    <div class="card" style="width: 25rem;">
+      <img class="card-img-top" src={{nft.image}} alt={{nft.nft_name}}>
+      <div class="card-body">
+        <h5 class="card-title">{{nft.nft_name}}</h5>
+        <p class="card-text">{{nft.description}}.</p>
+        <p class="card-text">Minimum Mint Price Donation: {{nft.minMintPrice}} {{nft.mintCurrencyERC20.displayName}}.</p>
+        <div *ngIf="nft.mintCurrency!='0x0000000000000000000000000000000000000000'">
+          <form class="form-inline">
+            <div class="form-group mb-2">
+              Donation Amount
+            </div>
+            <div class="form-group mx-sm-3 mb-2">
+              <label for="donationAmount" class="sr-only">Donation Amount</label>
+              <input type="number" class="form-control" id="donationAmount" name="donationAmountName" placeholder={{nft.minMintPrice}}
+              [(ngModel)]="donationAmount">
+            </div>
+            <div *ngIf = "!nftApprovedMintSpend[nft.nft_name]">
+
+              <button class="btn btn-primary mb-2"
+              (click) = "approveCurrency(nft.mintCurrency)"
+              >Approve Currency</button> 
+
+            </div>
+
+            <div *ngIf = "nftApprovedMintSpend[nft.nft_name]">
+
+              <button  class="btn btn-primary mb-2"
+              (click) = "mint(nft)"
+              >Mint</button>
+
+            </div>
+
+
+
+           
+          </form>
+       
+    </div>
+    
+    <hr/>
+  </div>
+</div>
+
+
+
+</div>
+<div class="card">
+<h5>Attention Artists:</h5>
+
+To submit your art for consideration on this page, please email the sample to hello@digible.io with subject line "STAND WITH UKRAINE ART."
+Please add your socials, and minimum mint Donation Amount (if any). Note the mint amount will be directly sent to the Donation Wallet for distribution to Ukrainian Government Charities.
+Royalties will also be set for the Donation Wallet.
+</div>

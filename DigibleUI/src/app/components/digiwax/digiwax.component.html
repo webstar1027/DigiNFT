@@ -1,0 +1,340 @@
+<div class="container page-top "  style="
+background-image: url('../../../assets/images/logos/DigiWaxTrans.png');
+
+background-repeat: no-repeat;
+background-position: top right;
+background-size: 10%;
+
+">
+  <!-- <div class="row c-page-title">
+    <div class="col-12 p-t-10 p-b-6">
+      <span class="section-title"><span class="icon duels"></span>DigiWax</span>
+    </div>
+    <div class="solid mt-4 mb-4"></div>
+  </div> -->
+  <!-- <div
+  class="bg-image"
+  style="
+    background-image: url('../../../assets/images/logos/DigiWaxTrans.png');
+    height: 100vh;
+    background-repeat: no-repeat;
+    background-position: top right;
+    background-size: 10%;
+    
+  "
+>
+</div> -->
+  <div class="row">
+    <div class="col">
+      <div class="mx-auto mt-4">
+        <form class="c-form" #enterDigiWaxForm="ngForm" appIdentityRevealed>
+          <div class="row">
+            <div class="col-12">
+              <div class="mx-auto text-center">
+                <h1 class="font-weight-bold">Welcome to DigiWax&trade; (beta)</h1>
+                <h5 class="font-weight-bold">Fairness Secured by Chainlink VRF&trade;</h5>
+                <br>
+                <h2 class="font-weight-bold"> Box Name: {{boxName}} <br></h2>
+                <h5 class="font-weight-bold">{{activeBox.publicComment}}<br></h5>
+                <div class="border-style-item mx-auto">
+                  
+                  <div *ngIf = "!oracleSpoke && isGenSubOpen">
+                  <span>General Entry Is Open </span>
+                  
+                  </div>
+
+                  <div *ngIf = "!oracleSpoke && !isGenSubOpen">
+                    <span>General Entry Is Not Open Yet </span>
+                    
+                    </div>
+
+                  <!-- <countdown #cd [config]="config"></countdown> -->
+
+                  <div *ngIf = "oracleSpoke">
+                    <span> Wax Has Been Broken. Entries are closed </span>
+                  </div>
+                  
+
+                </div>
+
+                
+              </div>
+            </div>
+
+            
+          </div>
+
+
+        <p></p>
+
+        <div *ngIf = "loadingSpots">
+     
+          <h3 class = "text-warning">Loading box info... please wait</h3>
+        </div>
+         
+          <div *ngIf = "!loadingSpots && remainingSpots > 0">
+       
+          <h3 class = "text-success">Spots Remaining: {{remainingSpots}} / {{totalSpots}} <br></h3>
+          </div>
+
+          <div *ngIf = "!loadingSpots && remainingSpots == 0">
+       
+            <h3 class = "text-danger">Spots Remaining: {{remainingSpots}} / {{totalSpots}} <br></h3>
+            </div>
+
+
+
+            <div *ngIf = "mySpots > 0">
+       
+              <h3 class = "text-success"> I own: {{mySpots}} spots <br></h3>
+              </div>
+    
+              <div *ngIf = "mySpots == 0">
+           
+                <h3 class = "text-danger">I own: {{mySpots}} spots <br></h3>
+                </div>
+          
+          I subscribed using General Entry: {{iSubscribedGeneral}} <br>
+          General Entry Fee Per Spot: ${{entryFee_human}} {{entryFeeAddressTokenName}} | Approval Status: {{currencyAllowed}}
+         <br>
+          Key Entry Fee Per Spot: No Fee <br>
+          My Available Keys: {{userKeys.length}} <br>
+          Box Created By: {{boxOwnerDisplay}} <br>
+          Seal Broken: {{oracleSpoke}} <br>
+
+          <div *ngIf = "iAmOwner">
+          <h3 class = "text-success font-weight-bold">BOX OWNER ACTIONS</h3>
+          
+
+        
+          <button
+          type="submit"
+          [disabled]="enterDigiWaxForm.invalid"
+          class="btn btn-primary"
+          (click)="updateSubscriptionsByBox(false, true)"
+        >
+          Open Key Subscription Only
+        </button>
+
+        <button
+        type="submit"
+        [disabled]="enterDigiWaxForm.invalid"
+        class="btn btn-primary"
+        (click)="updateSubscriptionsByBox(true, false)"
+      >
+        Open General Subscription Only 
+      </button>
+      <button
+      type="submit"
+      [disabled]="enterDigiWaxForm.invalid"
+      class="btn btn-success"
+      (click)="updateSubscriptionsByBox(true, true)"
+    >
+      Open Both Key and General
+    </button>
+
+    <button
+    type="submit"
+    [disabled]="enterDigiWaxForm.invalid"
+    class="btn btn-danger"
+    (click)="updateSubscriptionsByBox(false, false)"
+  >
+    Close Both
+  </button>
+
+  </div> 
+
+          
+         
+          <div *ngIf="isGenSubOpen && !oracleSpoke" class="mx-auto text-center mt-4">
+            <h1 class="font-weight-bold">General Entry</h1>
+            <h5 class="font-weight-bold">Maximum One Entry Per Wallet</h5>
+            <h6 class="font-weight-bold">Use a DigiKey for Additional Entries</h6>
+          
+            <div *ngIf="remainingSpots > 0 && !currencyAllowed">
+              <button
+                type="submit"
+                [disabled]="enterDigiWaxForm.invalid"
+                class="btn btn-primary"
+                (click)="approveCurrency()"
+              >
+                Approve  ${{entryFeeAddressTokenName}}
+              </button>
+              <br>
+              Please refresh page after MetaMask confirmation
+             </div>
+
+             <div *ngIf="remainingSpots > 0 && currencyAllowed && !loadingSpots && !iSubscribedGeneral">
+              <button
+                type="submit"
+                [disabled]="enterDigiWaxForm.invalid"
+                class="btn btn-primary"
+                (click)="subscribeWalletToBoxByName()"
+              >
+                ENTER {{entryFee_human}} ${{entryFeeAddressTokenName}}
+              </button>
+              <br>
+              Please refresh page after MetaMask confirmation
+             </div>
+
+             <div *ngIf = "remainingSpots == 0 && !loadingSpots">
+              <h2 class="font-weight-bold text-danger">All Spots are Taken.</h2>
+             </div>
+
+             <div *ngIf = "iSubscribedGeneral">
+              <h2 class="font-weight-bold text-success">I already subscribed.</h2>
+             </div>
+
+          </div>
+
+              <br>
+              <br>
+              <br>
+
+          <div class="jumbotron jumbotron bg-warning">
+            <div class="container">
+              <h1 class="display-4 text-center" >My Key Inventory  ({{userKeys.length}})</h1>
+              <p class="lead text-center"> Each key can only be used once per DigiWax box. <br> 
+              If you use the key and then sell or transfer it to another wallet, it cannot be used to enter this box again. </p>
+            </div>
+          </div>
+
+
+          
+          <div
+            class="row m-auto p-t-40 p-b-40 justify-center"
+            *ngIf="userKeys && userKeys.length >0"
+          >
+            <div
+              *ngFor="let nft of userKeys"
+              class="col-xl-3 col-lg-4 col-md-6 col-sm-6"
+              [@fade]="userKeys"
+            >
+              <div class="row">
+                <div *ngIf="!oracleSpoke" class="col-12">
+                  <div class="mx-auto text-center mb-4 mt-4">
+                    <p>
+                     
+                    </p>
+
+                    <div *ngIf = "remainingSpots > 0 && isKeySubOpen" >
+                      <button
+                        type="submit"
+                        class="btn btn-primary"
+                        (click)="subscribeWalletToBoxByRequestIdUsingKey(nft.token_address, nft.token_id)"
+                      >
+                        Enter Using Key ID# {{nft.token_id}}
+
+                    
+                      </button>
+                      <br>
+                      Please refresh page after MetaMask confirmation
+
+                    </div>
+
+
+                    <div *ngIf = "remainingSpots == 0">
+                      <h2 class="font-weight-bold text-danger">All Spots are Taken.</h2>
+                    </div>
+
+                     <div *ngIf = "!isKeySubOpen">
+                    <h2 class="font-weight-bold text-warning">Key Subscription not Open Yet.</h2>
+                  </div>
+
+                  </div>
+
+                 
+             
+
+                
+
+
+
+
+                </div>
+                <div class="col-12">
+                  <app-moralis-card
+                    view="profile"
+                    class="c-card-container"
+                    [data]="nft"
+                  ></app-moralis-card>
+                </div>
+                
+              </div>
+             
+            </div>
+          </div>
+          <div *ngIf ="loadingKeys">
+            <h2 class="font-weight-bold text-danger text-warning">Your Key inventory is loading.</h2>
+          </div>
+
+
+          <div *ngIf ="userKeys.length == 0 && !loadingKeys">
+            <h2 class="font-weight-bold text-danger text-center">You do not have any available Keys for entry.</h2>
+          </div>
+
+          <br>
+          <br>
+          <br>
+
+      <div class="jumbotron jumbotron bg-primary text-white">
+        <div class="container">
+          <h1 class="display-4 text-center" >  {{boxName}}  Contents </h1>
+          <p class="lead text-center">  This box contains {{totalSpots}}  NFTs below. <br>
+             After the subscription period is closed, DigiWax will assign an NFT to each entry using Chainlink VRF for a fair distribution. 
+          </p>
+        </div>
+      </div>
+
+
+      
+      <div
+        class="row m-auto p-t-40 p-b-40 justify-center"
+        *ngIf="boxNfts && boxNfts.length > 0"
+      >
+        <div
+          *ngFor="let nft of boxNfts"
+          class="col-xl-3 col-lg-4 col-md-6 col-sm-6"
+          [@fade]="boxNfts"
+        >
+          <div class="row">
+            
+            <div class="col-12">
+              <app-moralis-card
+                view="profile"
+                class="c-card-container"
+                [data]="nft"
+              ></app-moralis-card>
+            </div>
+            
+          </div>
+         
+        </div>
+      </div>
+
+      <div *ngIf = "totalSpots > loadedBoxNftsQty">
+        <h2 class="font-weight-bold text-primary text-center">Loaded {{loadedBoxNftsQty}} of {{totalSpots}}.</h2>
+        <div class="mx-auto text-center mb-4 mt-4">
+          <button
+            type="submit"
+            class="btn btn-primary "
+            (click)="loadBoxNfts()"
+            >  Load More
+
+                    
+          </button>
+         </div>
+
+      </div>
+
+      <div *ngIf = "totalSpots == loadedBoxNftsQty">
+
+      <h2 class="font-weight-bold text-success text-center">Loaded  All {{loadedBoxNftsQty}} of {{totalSpots}}.</h2>
+      </div>
+
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

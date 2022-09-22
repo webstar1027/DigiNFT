@@ -1,0 +1,26 @@
+<div class="container page-top d-flex flex-column items-center">
+  <h1 class="mt-2 mt-md-4 text-primary font-weight-bold">Create NFT</h1>
+  <div class="text-center">
+    Choose <span class="text-primary">"Single"</span> if you want to create one item or <span class="text-primary">"Multiple"</span> if you want to create multiple items in one shot
+  </div>
+  <div class="d-flex flex-wrap typeContainer">
+    <div class="typeItem d-flex flex-column items-center">
+      <img src="/assets/images/nft/single.jpg" class="w-full">
+      <a
+        [routerLink]="['/create/single']"
+        class="btn btn-outline-primary mt-4 font-weight-bold"
+      >
+        <span>Create Single</span>
+      </a>
+    </div>
+    <div class="typeItem d-flex flex-column items-center">
+      <img src="/assets/images/nft/multiple.jpg" class="w-full">
+      <a
+        [routerLink]="['/create/multiple']"
+        class="btn btn-outline-primary mt-4 font-weight-bold"
+      >
+        <span>Create Multiple</span>
+      </a>
+    </div>
+  </div>
+</div>

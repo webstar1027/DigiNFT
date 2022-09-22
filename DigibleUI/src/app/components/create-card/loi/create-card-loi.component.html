@@ -1,0 +1,348 @@
+<div class="container page-top">
+  <div class="error-alert my-0 py-3 mb-4" role="alert" id="error-alert" *ngIf="showAlertMessage">
+    <div class="d-flex font-weight-bold text-white mb-0">
+      <p class="mr-2 mb-0">
+        {{ error_message }}
+      </p>
+      <div (click)="closeErrorBanner()">
+        <i class="fa fa-times-circle cursor-pointer"></i>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12 p-t-10 p-b-6">
+      <div class="section-title">
+        <span class="icon box"></span>
+        <span>Create Single NFT ({{ getMintNetwork() }})</span>
+        <br>
+        <span>Digible's Land of Immortals Admin Mint Page</span>
+      </div>
+    </div>
+    <div class="solid mt-4 mb-4"></div>
+  </div>
+  <div class="row" *ngIf="loading">
+    <div class="col-lg-12">
+      <div class="mx-auto text-center">
+        <app-loading></app-loading>
+      </div>
+    </div>
+  </div>
+  <form #createNftForm="ngForm" appIdentityRevealed *ngIf="!loading" (ngSubmit)="create()">
+    <div class="row justify-center p-b-40 mt-4" *ngIf="!loading">
+      <div class="col-xl-6 col-lg-6 col-md-8 col-sm-12">
+        <form class="mx-auto">
+          <h3 class="font-weight-bold">Image or Video</h3>
+          <p class="text-primary">Supported file types are: .png, .jpg, .gif, .jpeg, .mp4</p>
+          <div class="row mb-4">
+            <div
+              class="col-xl-6 col-lg-6 col-md-6 col-sm-12 text-center mt-4 text-white"
+            >
+              <ngx-file-drop
+                accept=".png,.jpg,.jpeg,.gif,.jpeg,.mp4"
+                multiple="false"
+                dropZoneLabel="Drop files here"
+                (onFileDrop)="droppedFrontSide($event)"
+                dropZoneClassName="drop-zone"
+              >
+                <ng-template
+                  ngx-file-drop-content-tmp
+                  let-openFileSelector="openFileSelector"
+                >
+                  <div class="row">
+                    <div class="col-lg-12">
+                      <p class="text-primary">Drop file here or click button below.</p>
+                    </div>
+                    <div class="col-lg-12 p-t-10 p-b-10">
+                      <div *ngIf="imageUrlPREVIEW" class="image-preview">
+                        <img
+                          [src]="imageUrlPREVIEW"
+                          *ngIf="!isVideo"
+                        />
+                        <video controls *ngIf="isVideo">
+                          <source type="video/webm" [src]="imageUrlPREVIEW">
+                          <source type="video/mp4" [src]="imageUrlPREVIEW">
+                        </video>
+                      </div>
+                      <button
+                        type="button"
+                        class="btn btn-primary"
+                        (click)="openFileSelector()"
+                      >
+                        Browse Files
+                      </button>
+                    </div>
+                  </div>
+                </ng-template>
+              </ngx-file-drop>
+            </div>
+            <div
+              *ngIf="frontImageAdded"
+              class="col-xl-6 col-lg-6 col-md-6 col-sm-12 text-center mt-4 text-white"
+            >
+              <ngx-file-drop
+                accept=".png,.jpg,.jpeg,.gif,.jpeg,.mp4"
+                multiple="false"
+                dropZoneLabel="Drop files here"
+                (onFileDrop)="droppedBackSide($event)"
+                dropZoneClassName="drop-zone"
+              >
+                <ng-template
+                  ngx-file-drop-content-tmp
+                  let-openFileSelector="openFileSelector"
+                  class="p-4"
+                >
+                  <div class="row">
+                    <div class="col-lg-12">
+                      <p>
+                        If you are creating a card please drop image of
+                        <b>back</b> the card here.
+                      </p>
+                    </div>
+                    <div class="col-lg-12 p-t-10 p-b-10">
+                      <button
+                        type="button"
+                        class="btn btn-primary"
+                        (click)="openFileSelector()"
+                      >
+                        Browse Files
+                      </button>
+                    </div>
+                  </div>
+                </ng-template>
+              </ngx-file-drop>
+            </div>
+          </div>
+          <div class="card-sides" *ngIf="ipfsHashBack">
+            <h2>Flip side</h2>
+            <button
+              type="button"
+              class="close card-image-remove"
+              aria-label="Close"
+              (click)="removeBackSideImage()"
+              title="Remove back side of the card"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <img
+              [src]="ipfsUriBack"
+              class="card-preview"
+              *ngIf="!isVideoBack"
+              alt=""
+            /><br />
+            <div class="video-preview" *ngIf="isVideoBack">
+              <video
+                class="video-background"
+                autoplay
+                [muted]="'muted'"
+                loop
+                controls
+                [src]="ipfsUriBack"
+              ></video>
+            </div>
+          </div>
+          <h3 class="font-weight-bold">Details</h3>
+          <div class="user">
+            <div class="form-group p-t-10">
+              <label for="cardName"
+                >Name (This cannot be changed once created)</label
+              >
+              <input
+                type="text"
+                id="cardName"
+                required
+                class="form-control form-control-user"
+                placeholder="Name..."
+                name="cardName"
+                [(ngModel)]="formData.cardName"
+              />
+            </div>
+            <div class="form-group p-t-10">
+              <label for="nftDescription">Description</label>
+              <textarea
+                type="text"
+                id="nftDescription"
+                required
+                class="form-control form-control-user"
+                placeholder="Description..."
+                name="nftDescription"
+                [(ngModel)]="formData.nftDescription"
+              ></textarea>
+            </div>
+            <div class="form-group p-t-20">
+              <div class="d-flex flex-column">
+                <div>
+                  <label for="backed" class="bold mr-2"
+                    >Is physically backed?</label
+                  >
+                  <input
+                    type="checkbox"
+                    [(ngModel)]="formData.physical"
+                    name="physical"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group p-t-10">
+            <h3 class="font-weight-bold">Collection</h3>
+            <ul class="border p-4">
+              <li class="d-flex items-center">
+                <div class="d-flex flex-column justify-center">
+                  <h2 class="font-weight-bold d-block">Properties</h2>
+                  <span>Traits that show up as rectangles</span>
+                </div>
+                <div class="ml-auto">
+                  <button
+                    id="addPropertiesModalTrigger"
+                    data-toggle="modal"
+                    data-target="#addPropertiesModal"
+                    class="btn btn-primary ml-auto"
+                    #addPropertiesModalTrigger
+                  >
+                    <span>Add Props</span>
+                  </button>
+                </div>
+              </li>
+            </ul>
+            <ul class="traits row" *ngIf="traitsArray">
+              <li
+                class="list-unstyled col-md-4"
+                *ngFor="let trait of traitsArray"
+              >
+                <div class="trait">
+                  <span class="font-weight-bold text-uppercase">{{
+                    trait.trait_type
+                  }}</span>
+                  <span>{{ trait.value }}</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <button
+            type="submit"
+            [disabled]="createNftForm.invalid"
+            class="btn btn-primary"
+            (click)="create()"
+          >
+            Create
+          </button>
+        </form>
+      </div>
+    </div>
+  </form>
+</div>
+<div
+  class="modal fade"
+  id="addPropertiesModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="addProperties"
+  aria-hidden="true"
+  #addTokenModal
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addPropertiesModalLabel">Add Properties</h5>
+        <p class="m-0">
+          Properties will be present on the details page of your item
+        </p>
+        <button
+          id="closeModal"
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form
+        [formGroup]="addAttributesForm"
+        class="modal-body"
+        (ngSubmit)="setTraits()"
+      >
+        <div class="row">
+          <div class="col-lg-12 p-t-15">
+            <table>
+              <thead class="c-properties-form">
+                <tr class="c-properties-form__head-row">
+                  <th class="c-properties-form__head-column">Type</th>
+                  <th class="c-properties-form__head-column">Name</th>
+                </tr>
+              </thead>
+              <tbody
+                formArrayName="attributes"
+                *ngFor="let attribute of attributes.controls; let i = index"
+                class="c-properties-form__body showInputField"
+              >
+                <tr [formGroupName]="i" class="c-properties-form__table-row">
+                  <td class="c-properties-form__table-column">
+                    <div class="c-properties-form__input">
+                      <div
+                        (click)="removeTrait()"
+                        class="c-properties-form__label"
+                      >
+                        <i class="c-properties-form__close" value="X" size="24"
+                          >X</i
+                        >
+                      </div>
+                      <input
+                        formControlName="trait_type"
+                        id="{{ 'trait_type' + i }}"
+                        autocapitalize="off"
+                        autocomplete="off"
+                        autocorrect="off"
+                        class="form-control form-control-user"
+                        data-testid="Input"
+                        placeholder="Attribute Type"
+                        spellcheck="false"
+                        type="text"
+                        value=""
+                      />
+                    </div>
+                  </td>
+                  <td class="c-properties-form__table-column">
+                    <div class="c-properties-form__input">
+                      <input
+                        formControlName="value"
+                        id="{{ 'value' + i }}"
+                        autocapitalize="off"
+                        autocomplete="off"
+                        autocorrect="off"
+                        class="form-control form-control-user"
+                        data-testid="Input"
+                        placeholder="Attribute Name"
+                        spellcheck="false"
+                        type="text"
+                        value=""
+                      />
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <button
+              (click)="addTrait()"
+              type="button"
+              class="button button-secondary mt-4"
+            >
+              Add more
+            </button>
+          </div>
+        </div>
+        <div class="row p-t-15 p-b-10 center justify-center">
+          <div class="col-lg-12">
+            <button
+              [disabled]="addAttributesForm.invalid"
+              type="submit"
+              class="btn btn-primary"
+            >
+              Save
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

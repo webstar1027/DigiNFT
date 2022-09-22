@@ -1,0 +1,188 @@
+.card-preview {
+  max-width: 220px;
+}
+
+.video-preview {
+  max-width: 420px;
+}
+
+.video-background {
+  width: 100%;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.button {
+  font-family: "Avenir LT Std";
+  font-size: 17px;
+  background-color: #5588e6;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  color: white;
+
+  & .full-width {
+    width: 100%;
+  }
+}
+
+.card-sides {
+  position: relative;
+}
+
+.card-image-remove {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.drop-zone {
+  border: 2px dashed #0782d0;
+  border-radius: 30px;
+  margin: auto;
+  padding: 0px 2rem !important;
+  display: flex;
+  justify-content: center;
+  height: 100% !important;
+}
+
+.drop-zone-csv {
+  border: 2px dashed #1cc88a;
+  border-radius: 30px;
+  margin: auto;
+  padding: 0px 2rem !important;
+  display: flex;
+  justify-content: center;
+  height: 100% !important;
+}
+
+/* ==================
+Properties form 
+=====================*/
+
+.c-properties-form__body {
+  display: table-row-group;
+  vertical-align: middle;
+  border-color: inherit;
+}
+
+.c-properties-form__close {
+  padding: 0px 12px;
+  cursor: pointer;
+}
+
+.c-properties-form__input {
+  background-color: rgb(255, 255, 255);
+  border-radius: 10px;
+  border: 1px solid rgb(229, 232, 235);
+  display: flex;
+  position: relative;
+
+  .form-control {
+    border-radius: 0;
+    border: 1px solid rgb(229, 232, 235);
+  }
+}
+
+.c-properties-form__label {
+  border-bottom-left-radius: 10px;
+  border-right: 1px solid rgb(229, 232, 235);
+  border-top-left-radius: 10px;
+  -webkit-box-align: center;
+  align-items: center;
+  color: rgb(112, 122, 131);
+  display: flex;
+  -webkit-box-pack: center;
+  justify-content: center;
+  user-select: none;
+  background-color: rgb(251, 253, 255);
+}
+
+.ngx-file-drop__content {
+  height: auto !important;
+}
+
+.image-preview {
+  margin-bottom: 1rem;
+}
+
+.nftItem {
+  padding: 16px 16px 24px;
+  border-radius: 16px;
+  border: 1px solid #e0e2e6;
+  transition: box-shadow .2s;
+  background-color: white;
+
+  &:hover {
+    box-shadow: 0px 40px 32px -24px rgba(15, 15, 15, 0.12); 
+  }
+
+  .imgCard {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #ffffff;
+    height: 210px;
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    border-radius: 16px;
+    border: 1px solid #dee3ea;
+    padding: 1rem;
+
+    @media only screen and (min-width: 414px) {
+      height: 280px;
+    }
+
+    img, video {
+      width: 100%;
+      max-height: 100%;
+      border-radius: 16px;
+    }
+  }
+}
+
+.editNftForm {
+  overflow: auto;
+  max-height: 80vh;
+  padding-bottom: 20px;
+}
+
+.editNftModalButtons {
+  gap: 12px;
+}
+
+.addPropButton {
+  width: 120px;
+  padding: 8px 0px;
+}
+
+.gap-3 {
+  gap: 12px;
+}
+
+.gap-6 {
+  gap: 24px;
+}
+
+.help-button {
+  border-radius: 50%;
+  text-align: center;
+  width: 36px;
+  height: 36px;
+  font-size: 24px;
+  font-weight: 700;
+  border-width: 2px;
+  border-style: solid;
+}
+
+.help-modal-body {
+  p {
+    margin-bottom: 0px;
+  }
+}

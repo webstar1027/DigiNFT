@@ -1,0 +1,666 @@
+<div class="c-profile page-top">
+  <div
+    class="c-profile__hero"
+    [ngStyle]="{
+      'background-image':
+        profile && profile.hero_picture
+          ? 'url(' + profile.hero_picture + ')'
+          : ''
+    }"
+  >
+    <div class="c-profile__hero-overlay"></div>
+    <span
+      *ngIf="profile && profile.picture"
+      class="c-profile__avatar"
+      (click)="showZoomImage=true"
+      [ngStyle]="{ 'background-image': 'url(' + profile.picture + ')' }"
+    ></span>
+    <span *ngIf="!profile || !profile.picture" class="c-profile__avatar"></span>
+    <div *ngIf="isYourProfile" class="c-profile__edit">
+      <button
+        id="editDescriptionModal"
+        data-toggle="modal"
+        data-target="#addDescriptionModal"
+        class="btn btn-primary mb-4"
+        #editDescriptionModal
+      >
+        <span>Edit</span>
+      </button>
+    </div>
+  </div>
+  <div class="row p-t-40">
+    <div class="container p-t-40">
+      <div class="col-lg-6 m-auto center">
+        <div class="c-profile__title" *ngIf="profile && !isYourProfile">
+          <div
+            *ngIf="verifiedAddress"
+            class="c-profile__creator icon-creator"
+          ></div> 
+          <div
+          *ngIf="isDigisafe"
+          class="c-card__safe icon safe mr-2">
+        </div>
+          <h1>{{ profile.username }}</h1>
+        </div>
+
+        <div class="c-profile__title" *ngIf="isYourProfile">
+          <div
+            *ngIf="verifiedAddress"
+            class="c-profile__creator icon-creator"
+            
+          ></div>
+          <div
+          *ngIf="isDigisafe"
+          class="c-card__safe icon safe mr-2">
+        </div>
+
+          
+          <h1>My Profile</h1>
+        </div>
+        <div class="c-profile__address mb-1">
+          <div>
+            <span>{{ displayAddress }}</span>
+          </div>
+        </div>
+        <span *ngIf="myCode != ''" class="text-primary">
+          DigiSafe Code: {{ myCode }}
+        </span>
+        <div class="c-profile__social">
+          <div class="social" *ngIf="profile">
+            <a
+              [href]="'https://twitter.com/' + profile.twitter"
+              *ngIf="profile.twitter"
+              target="_blank"
+              ><i class="icon fab fa-twitter"></i
+            ></a>
+
+            <a
+              [href]="'https://twitch.tv/' + profile.twitch"
+              *ngIf="profile.twitch"
+              target="_blank"
+              ><i class="icon fab fa-twitch"></i
+            ></a>
+
+            <a
+              [href]="'https://www.tiktok.com/' + profile.tiktok"
+              *ngIf="profile.tiktok"
+              target="_blank"
+              ><i class="icon fab fa-tiktok"></i
+            ></a>
+
+            <a
+              [href]="'https://instagram.com/' + profile.instagram"
+              *ngIf="profile.instagram"
+              target="_blank"
+              ><i class="icon fab fa-instagram"></i
+            ></a>
+
+            <a [href]="profile.website" *ngIf="profile.website" target="_blank"
+              ><i class="icon fa fa-desktop"></i
+            ></a>
+          </div>
+        </div>
+        <div
+          *ngIf="profile && profile.description"
+          class="c-profile__description"
+        >
+          <h2>
+            {{ profile.description }}
+          </h2>
+        </div>
+        <div class="c-profile__details">
+          <div class="c-profile__detail-item">
+            <span *ngIf="myCardsFiltered && myCardsFiltered.length >= 1">{{
+              myCardsFiltered.length
+            }}</span>
+            <span *ngIf="myCardsFiltered && myCardsFiltered.length < 1">0</span>
+            <span *ngIf="!myCardsFiltered">...</span>
+            <span>Items</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container p-t-40">
+    <div class="row">
+      <div class="col-md-8 col-lg-9 p-t-10 p-b-6">
+        <span class="section-title"
+          ><span class="icon collections"></span>Collection</span
+        >
+      </div>
+      <div class="col-md-4 col-lg-3 right" *ngIf="!loading">
+        <ng-select
+          placeholder="Filter By"
+          [items]="filterBy"
+          bindLabel="name"
+          bindValue="id"
+          (change)="changeFilter()"
+          [(ngModel)]="typeFilter"
+        >
+        </ng-select>
+      </div>
+      <div class="solid mt-4 mb-4"></div>
+    </div>
+
+    <div class="row" *ngIf="loading">
+      <div class="col">
+        <div class="mx-auto text-center mt-4 mb-4">
+          <app-loading></app-loading>
+        </div>
+      </div>
+    </div>
+
+    <div class="row" *ngIf="!loading && myCardsFiltered && myCardsFiltered.length === 0">
+      <div class="col">
+        <div class="mx-auto text-center mt-4 mb-4">
+          <b>No data available</b>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="row m-auto p-t-40"
+      *ngIf="myCardsFiltered && myCardsFiltered.length > 0"
+    >
+      <div
+        *ngFor="let nft of myCardsFiltered"
+        class="col-xl-3 col-lg-4 col-md-6 col-sm-6"
+        [@fade]="myCardsFiltered"
+      >
+        <app-moralis-card
+          view="profile"
+          class="c-card-container"
+          [data]="nft"
+          [getSale]="true"
+        ></app-moralis-card>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12 p-t-10 p-b-6">
+        <span class="section-title"
+          ><span class="icon light"></span>Activity History
+        </span>
+      </div>
+      <div class="solid mt-4 mb-4"></div>
+    </div>
+    <div class="p-b-40">
+      <div class="row" *ngIf="activityHistory == null">
+        <div class="col">
+          <div class="mx-auto text-center mt-4 mb-4">
+            <app-loading></app-loading>
+          </div>
+        </div>
+      </div>
+      <div class="row" *ngIf="activityHistory">
+        <div class="col-12">
+          <div class="card min-height shadow mt-4">
+            <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold text-primary txt-title">
+                Last Actions
+              </h6>
+            </div>
+
+            <div class="card-body">
+              <div
+                class="row"
+                *ngIf="activityHistory && activityHistory.length == 0"
+              >
+                <div class="col">
+                  <div class="mx-auto text-center mt-4 mb-4">
+                    <b>No recent activity found</b>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row" *ngIf="activityHistory != null">
+                <div *ngFor="let activity of activityHistory" class="col-12">
+                  <p>
+                    <span
+                      *ngIf="
+                        activity.from_address !==
+                          '0x0000000000000000000000000000000000000000' &&
+                        activity.to_address !== address
+                      "
+                      >SOLD</span
+                    >
+                    <span
+                      *ngIf="
+                        activity.from_address !==
+                          '0x0000000000000000000000000000000000000000' &&
+                        activity.to_address === address
+                      "
+                      >BOUGHT</span
+                    >
+                    Token
+                    <a
+                      [routerLink]="[
+                        '/details/' +
+                          'MATIC' +
+                          '/' +
+                          activity.token_id +
+                          '/' +
+                          activity.token_address
+                      ]"
+                      class="font-weight-bold"
+                      >#{{ activity.token_id }}</a
+                    >
+                    <span
+                      *ngIf="
+                        activity.from_address !==
+                          '0x0000000000000000000000000000000000000000' &&
+                        activity.to_address !== address
+                      "
+                    >
+                      to</span
+                    >
+                    <span
+                      *ngIf="
+                        activity.from_address !==
+                          '0x0000000000000000000000000000000000000000' &&
+                        activity.to_address === address
+                      "
+                    >
+                      from</span
+                    >
+                    <a
+                      class="owner-name"
+                      [routerLink]="['/profile', activity.to_address]"
+                    >
+                      {{ this.truncate(activity.to_address, 15, "...") }}
+                    </a>
+                  </p>
+                  <p
+                    *ngIf="
+                      activity.from_address ===
+                      '0x0000000000000000000000000000000000000000'
+                    "
+                  >
+                    MINTED Token
+                    <span class="font-weight-bold"
+                      >#{{ activity.token_id }} at
+                      <a
+                        href="{{
+                          'https://polygonscan.com/address/' +
+                            activity.token_address
+                        }}"
+                        >{{
+                          this.truncate(activity.token_address, 15, "...")
+                        }}</a
+                      >
+                    </span>
+                  </p>
+                  <!--  <span *ngIf="activity.action == 'buy'">
+                    This user has purchased{{
+                      activity.isDigi ? "" : " external"
+                    }}
+                    NFT number
+                    <a
+                      *ngIf="activity.isDigi"
+                      [routerLink]="['/details/' + 'MATIC' + '/' + activity.token_id + '/' + activity.token_address]"
+                      >{{ activity.token_id }}</a
+                    >
+                    {{ activity.isDigi ? "" : activity.tokenId }} for
+                    <b>{{ activity.humanAmount }} {{ stableSymbol }}</b> on
+                    {{ activity.created | date: "HH:mm dd/MM/YYYY" }}
+                  </span>
+                  <span *ngIf="activity.action != 'buy'">
+                    This user has bid for the NFT number
+                    <a [routerLink]="['/details', activity.tokenId]">{{
+                      activity.tokenId
+                    }}</a>
+                    for <b>{{ activity.humanAmount }} {{ stableSymbol }}</b> on
+                    {{ activity.block_timestamp | date: "HH:mm dd/MM/YYYY" }}
+                  </span> -->
+                  <!--  <span *ngIf="activity.action == 'buy'">
+                    This user has purchased{{
+                      activity.isDigi ? "" : " external"
+                    }}
+                    NFT number
+                    <a
+                      *ngIf="activity.isDigi"
+                      [routerLink]="['/details', activity.tokenId]"
+                      >{{ activity.tokenId }}</a
+                    >
+                    {{ activity.isDigi ? "" : activity.tokenId }} for
+                    <b>{{ activity.humanAmount }} {{ stableSymbol }}</b> on
+                    {{ activity.created | date: "HH:mm dd/MM/YYYY" }}
+                  </span>
+                  <span *ngIf="activity.action != 'buy'">
+                    This user has bid for the NFT number
+                    <a [routerLink]="['/details', activity.tokenId]">{{
+                      activity.tokenId
+                    }}</a>
+                    for <b>{{ activity.humanAmount }} {{ stableSymbol }}</b> on
+                    {{ activity.created | date: "HH:mm dd/MM/YYYY" }}
+                  </span> -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container mt-4 container-profile-fluid" *ngIf="isYourProfile">
+    <div class="row">
+      <div class="col-12 p-t-10 p-b-6">
+        <span class="section-title"
+          ><span class="icon fire"></span>Auctions Pending
+        </span>
+      </div>
+      <div class="solid mt-4 mb-4"></div>
+    </div>
+    <div class="p-b-40">
+      <div class="row" *ngIf="pendingAuctions == null">
+        <div class="col">
+          <div class="mx-auto text-center mt-4 mb-4">
+            <app-loading></app-loading>
+          </div>
+        </div>
+      </div>
+
+      <div class="row" *ngIf="pendingAuctions && pendingAuctions.length == 0">
+        <div class="col">
+          <div class="mx-auto text-center mt-4 mb-4">
+            <b>No pending auctions to claim</b>
+          </div>
+        </div>
+      </div>
+
+      <div class="row" *ngIf="pendingAuctions">
+        <div
+          *ngFor="let nft of pendingAuctions"
+          class="col-xl-3 col-lg-4 col-md-6 col-sm-6"
+        >
+          <app-moralis-card [data]="nft"></app-moralis-card>
+          <button
+            (click)="claim(nft.auctionId, nft.network)"
+            class="c-card__button btn btn-primary full-width mt-2"
+            *ngIf="nft.sold"
+          >
+            <span *ngIf="nft.seller">{{
+              loading ? "..." : "Claim " + stableSymbol
+            }}</span>
+            <span *ngIf="!nft.seller">{{ loading ? "..." : "Claim NFT" }}</span>
+          </button>
+          <button
+            (click)="cancel(nft.auctionId, nft.network)"
+            class="c-card__button btn btn-primary full-width mt-2"
+            *ngIf="!nft.sold"
+          >
+            <span>{{ loading ? "..." : "Cancel" }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="container mt-4 container-profile-fluid"
+    *ngIf="
+      pendingTransfersFromMatic &&
+      isYourProfile &&
+      pendingTransfersFromMatic.length > 0
+    "
+  >
+    <div class="row">
+      <div class="col-12 p-t-10 p-b-6">
+        <span class="section-title"
+          ><span class="icon fire"></span>Claim transferred from Matic</span
+        >
+      </div>
+      <div class="solid mt-4 mb-4"></div>
+    </div>
+    <div class="p-b-40">
+      <div class="row">
+        <div
+          *ngFor="let nft of pendingTransfersFromMatic"
+          class="col-xxl-2 col-xl-3 col-lg-4 col-md-6 col-sm-12"
+        >
+          <app-moralis-card
+            view="profile"
+            id="{{ nft.tokenId }}"
+          ></app-moralis-card>
+          <button
+            (click)="completeTransferFromMatic(nft.hash)"
+            class="btn btn-primary mt-4"
+          >
+            <span>{{ loading ? "..." : "Claim token " + nft.tokenId }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="modal fade"
+    id="addDescriptionModal"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="addDescription"
+    aria-hidden="true"
+    #addTokenModal
+  >
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="searchModalLabel">Edit profile</h5>
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-lg-12">
+              <form class="user row">
+                <div *ngIf="profile" class="col-lg-12 form-group">
+                  <label for="profile_name" class="block"
+                    >Profile Username</label
+                  >
+                  <input
+                    [(ngModel)]="profile.username"
+                    name="profile_name"
+                    id=""
+                    cols="30"
+                    rows="10"
+                  />
+                </div>
+                <div *ngIf="profile" class="col-lg-12 form-group">
+                  <label for="profile_description">Description</label>
+                  <textarea
+                    [(ngModel)]="profile.description"
+                    name="profile_description"
+                    id="description"
+                  ></textarea>
+                </div>
+                <div *ngIf="profile" class="col-lg-6 form-group">
+                  <label for="profile_email" class="block">Email</label>
+                  <input
+                    [(ngModel)]="profile.email"
+                    name="profile_email"
+                    id="profile_email"
+                    cols="30"
+                    rows="10"
+                  />
+                </div>
+                <div *ngIf="profile" class="col-lg-6 form-group">
+                  <label for="profile_twitter" class="block">Twitter</label>
+                  <input
+                    [(ngModel)]="profile.twitter"
+                    name="profile_twitter"
+                    id="profile_twitter"
+                    cols="30"
+                    rows="10"
+                  />
+                </div>
+                <div *ngIf="profile" class="col-lg-6 form-group">
+                  <label for="profile_instagram" class="block">Instagram</label>
+                  <input
+                    [(ngModel)]="profile.instagram"
+                    name="profile_instagram"
+                    id="profile_instagram"
+                    cols="30"
+                    rows="10"
+                  />
+                </div>
+                <div *ngIf="profile" class="col-lg-6 form-group">
+                  <label for="profile_twitch" class="block">Twitch</label>
+                  <input
+                    [(ngModel)]="profile.twitch"
+                    name="profile_twitch"
+                    id="profile_twitch"
+                    cols="30"
+                    rows="10"
+                  />
+                </div>
+                <div *ngIf="profile" class="col-lg-6 form-group">
+                  <label for="profile_tiktok" class="block">TikTok</label>
+                  <input
+                    [(ngModel)]="profile.tiktok"
+                    name="profile_tiktok"
+                    id="profile_tiktok"
+                    cols="30"
+                    rows="10"
+                  />
+                </div>
+                <div class="col-lg-12">
+                  <div class="row">
+                    <div class="col-6">
+                      <div *ngIf="profile" class="form-group text-center">
+                        <label for="">Profile Hero Image</label>
+                        <ngx-file-drop
+                          accept=".png,.jpg,.jpeg,.mp4"
+                          multiple="false"
+                          dropZoneLabel="Drop files here"
+                          (onFileDrop)="dropped($event, 'hero_picture')"
+                        >
+                          <ng-template
+                            ngx-file-drop-content-tmp
+                            let-openFileSelector="openFileSelector"
+                          >
+                            <div class="row">
+                              <div class="col-lg-12 p-t-10 text-center">
+                                <img
+                                  *ngIf="!imageUrlPreviewHero"
+                                  class="avatar-img"
+                                  [src]="
+                                    !this.loadFiles.hero_picture
+                                      ? profile.hero_picture
+                                      : this.loadFiles.hero_picture
+                                  "
+                                  alt=""
+                                />
+                                <img
+                                  *ngIf="imageUrlPreviewHero"
+                                  class="avatar-img"
+                                  [src]="imageUrlPreviewHero"
+                                  alt=""
+                                />
+                              </div>
+                              <div class="col-lg-12 p-t-10">
+                                <button
+                                  id="hero_picture"
+                                  type="button"
+                                  class="btn btn-primary"
+                                  (click)="openFileSelector()"
+                                >
+                                  Browse Files
+                                </button>
+                              </div>
+                            </div>
+                          </ng-template>
+                        </ngx-file-drop>
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <div *ngIf="profile" class="form-group text-center">
+                        <label for="">Profile Avatar</label>
+                        <ngx-file-drop
+                          accept=".png,.jpg,.jpeg,.mp4"
+                          multiple="false"
+                          dropZoneLabel="Drop files here"
+                          (onFileDrop)="dropped($event, 'picture')"
+                        >
+                          <ng-template
+                            ngx-file-drop-content-tmp
+                            let-openFileSelector="openFileSelector"
+                          >
+                            <div class="row">
+                              <div class="col-lg-12 p-t-10 text-center">
+                                <img
+                                  *ngIf="!imageUrlPreviewIcon"
+                                  class="avatar-img"
+                                  [src]="
+                                    !this.loadFiles.picture
+                                      ? profile.picture
+                                      : this.loadFiles.picture
+                                  "
+                                  alt=""
+                                />
+                                <img
+                                  *ngIf="imageUrlPreviewIcon"
+                                  class="avatar-img"
+                                  [src]="imageUrlPreviewIcon"
+                                  alt=""
+                                />
+                              </div>
+                              <div class="col-lg-12 p-t-10">
+                                <button
+                                  id="picture"
+                                  type="button"
+                                  class="btn btn-primary"
+                                  (click)="openFileSelector()"
+                                >
+                                  Browse Files
+                                </button>
+                              </div>
+                            </div>
+                          </ng-template>
+                        </ngx-file-drop>
+                      </div>
+                    </div>
+                    <div class="col-12">
+                      <button
+                        class="btn btn-primary w-100"
+                        (click)="updateProfile()"
+                      >
+                        SUBMIT
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+          <!--
+          <div class="row p-t-15 p-b-10 center justify-center">
+            <div class="col-lg-12">
+              <button
+                type="button"
+                class="btn btn-primary"
+                (click)="updateProfile()"
+              >
+                {{ descriptionLoading ? ". . ." : "Save" }}
+              </button>
+            </div>
+          </div>
+            -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<ng-image-fullscreen-view
+  [images]="imageObject"
+  [imageIndex]="0"
+  [show]="showZoomImage"
+  [animationSpeed]="1"
+  (close)="closeEventHandler()">
+</ng-image-fullscreen-view>

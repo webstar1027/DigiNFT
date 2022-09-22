@@ -1,0 +1,22 @@
+.c-team {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.circle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100px;
+  height: 100px;
+  border-radius: 100%;
+  background-color: #213458;
+
+  :host-context(.dark-mode) & {
+    background-color: #5588e6;
+  }
+}
